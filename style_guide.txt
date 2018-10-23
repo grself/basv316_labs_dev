@@ -1,0 +1,28 @@
+Data frame names are enclosed in single asterisks: *trees*
+
+Variable names are are enclosed in single asterisks: *Volume* (consider also including the data frame name, like *trees$Volume*)
+
+Math formulas (inline) are not formated in any special way (note, enclosing in single dollar signs: $(1.5*IQR)$ creates a font that is larger and bolder than the surrounding font and looks bad).
+
+Math blocks are enclosed in double dollar signs and aligned:
+
+  $$
+  \begin{aligned}
+  Lower &= Q1 - (1.5 * IRQ)  \\
+  Lower &= 19.40 - (1.5 * 17.9)  \\
+  Lower &= 19.40 - 26.85  \\
+  Lower &= 0
+  \end{aligned}
+  $$
+
+The words "r", "rho", and "tau" are italicised (inside asterisks): *r* *rho* and *tau*
+
+For text blocks:
+
+<div class="grsnote">
+This is just a block of text.
+</div>
+
+Also: grswarn
+
+The font-awesome icons: https://fontawesome.com/cheatsheet?from=io

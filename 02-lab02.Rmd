@@ -1,0 +1,207 @@
+# (PART) Descriptive Statistics {-}
+
+# Central Measures {#lab2}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%",
+  message=FALSE,
+  warnings=FALSE
+)
+```
+
+
+```{r, include=FALSE}
+library(tutorial)
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+## Concepts
+
+It is often desirable to characterize an entire vector of numbers with a single value and the number that is "in the middle" of the vector would seem most logical to use. Students in elementary school are taught how to find the average of a group of numbers and they learn that the average is the best representation for that entire group. In statistics, though, there are several different numbers that are often used to represent an entire vector of numbers and these are  collectively known as the Central Measures, or numbers that are the "middle" of the vector.
+
+<div class="grsnote">
+A *vector* is nothing more than a list of related items. For example, a vector of street names may look like c("elm", "main", "first", "raven") and a vector of test scores may look like c(83, 91, 76, 88). Notice that vectors in R are created with a "c" (for "combine") operator.
+</div>
+
+### N
+
+One of the simplest of measures is nothing more than the number of items in a vector. For example, for the vector 5, 7, 13, 22 the *N* (number of items) is 4. Technically, N does not identify the middle of a vector but it is an important measure and is included here for completeness.
+
+#### Finding N
+
+To find the number of items in a vector (N), use the *length* procedure as found in the R script below.
+
+* Line 2: The length of the *rivers* vector is printed, which is the same as the number of items in that vector, or N.
+* Line 3: The length of the *faithful\$eruptions* vector is printed, which is the same as the number of items in the vector, or N. Notice that because the *faithful* data frame contains more than one vector it is necessary to specify both the data frame name and the vector name with a dollar sign between them.
+
+```{r}
+# Finding N
+length(rivers)
+length(faithful$eruptions)
+```
+
+
+### Mean
+
+The mean is calculated by adding all of the data items together and then dividing that sum by the number of items (N), which is taught in elementary school as the average. For example, given the vector: 6, 8, 9, the total is 23 and that divided by 3 (N) is 7.66; so the mean of 6, 8, 9 is 7.66. 
+
+#### Finding the Mean
+
+To find the mean of a vector, use the "mean" procedure as found in the R script below.
+
+* Line 2: Attach the *faithful* data frame for the next two lines.
+* Lines 3-4: Calculate the means for *eruptions* and *waiting*.
+* Line 5: Detach the *faithful* data frame.
+* Line 8: Attach the *iris* data frame for the next four lines.
+* Lines 9-12: Calculate the means for various variables in the *iris* data frame.
+* Line 13: Detach the *iris* data frame.
+
+
+```{r}
+# Find means for faithful
+attach(faithful)
+mean(eruptions)
+mean(waiting)
+detach(faithful)
+
+# Find means for iris
+attach(iris)
+mean(Sepal.Width)
+mean(Sepal.Length)
+mean(Petal.Width)
+mean(Petal.Length)
+detach(iris)
+```
+
+#### Finding the Trimmed Mean
+
+If a vector has outliers, or values that are unusually large or small, then the mean is often skewed such that it no longer represents the "average" value. As an example, the length (in miles) of the 141 longest rivers in North America ranges from 135 to 3710 and the mean of these values is 591 miles (these data are found in the *rivers* data frame included with R). Unfortunately, because the lengths of the top few rivers are disproportionately higher than the rest of the values in the vector (their lengths are outliers), the mean is skewed upward. One way to compensate for outliers is to use a trimmed mean (sometimes called a truncated mean). A trimmed mean is calculated by removing a specific number of values from both the top and bottom of the vector and then finding the mean of the remaining values. In the case of the rivers vector, if 5% of the values are removed from both the top and bottom (7 values from each end of the vector, for 10% total) then 127 values remain with a range from 230 to 1450 and the trimmed mean for that vector is 519. Trimming the vector effectively removes both upper and lower outliers and produces a much more reasonable central value for this vector. In actual practice, a trimmed mean is not commonly used since it is difficult to know how much to trim from the vector and the resulting mean may be just as skewed as if no values were trimmed; thus, when outliers are suspected, the best "middle" term to report is the median.
+
+<div class="grsnote">
+Outliers are more thoroughly defined and mathematically calculated in [Lab 3](#lab3outliers).
+</div>
+
+
+The trimmed mean can be easily found in R by adding a "single"trim"" parameter to the *mean* command, as demonstrated in the following script. 
+
+* Lines 2-4: calculate the trimmed mean by including "trim=0.15" in the *mean* function. Line 2 trims 15% from each end of the *rivers* vector and Line 3 trims 25%.
+
+```{r}
+# Find trimmed means for rivers
+mean(rivers)
+mean(rivers, trim=0.15)
+mean(rivers, trim=0.25)
+
+# Find trimmed means for attenu
+attach(attenu)
+mean(accel)
+mean(accel, trim=0.15)
+mean(accel, trim=0.25)
+detach(attenu)
+```
+
+### Median
+
+The median is found by listing all of the data items in numeric order and then mechanically finding the middle item. For  example, using the vector 6, 8, 9, the middle item (or median) is 8. If the vector has an even number of items, then the median is calculated as the mean between the two middle items. For example, in the vector 6, 8, 9, 13 the median is 8.5, which is the mean of 8 and 9, the two middle terms. 
+
+The median is very useful in cases where the vector has outliers. As an example of using a median rather than a mean, consider the vector 5, 6, 7, 8, 30. The mean is (5+6+7+8+30)/5 = 56/5 = 11.2. However, 11.2 is clearly much higher than most of the other numbers in that vector since one outlier, 30, is significantly skewing the mean upward. A much better representation of the center of this vector is 7, which is the median. To re-visit the river lengths introduced above, the median of the vector is 425, which is much more representative of the "middle" length than using either the mean or the trimmed mean.
+
+As another example where the median is the best central measure, suppose a newspaper reporter wanted to find the "average" wage for a group of factory workers. The ten workers in that factory all have an annual salary of \$25,000; however, the supervisor has a salary of \$125,000. In the newspaper article, the supervisor is quoted as saying that his workers have an average salary of \$34,090. That is correct if the mean of all those salaries (including the supervisor's) is reported, but that number is clearly higher than any sort of reasonable "average" salary for workers in the factory due to the one outlier. In this case, the median of \$25,000 would be much more representative of the "average" salary. The median is typically reported for salaries, home values, and other vectors where one or two outliers typically distort the reported "middle" value.
+
+If the vector contains no outliers, then the mean and median are the same; but if there are outliers then these two measures become separated, often by a large amount. Consider the *rivers* vector mentioned in the Mean section above. That vector has a mean of 591 and a median of 425. This difference, 166, is about 28% of the mean and is significant. The size of this difference would tell a researcher that there are outliers in the vector that may be skewing the mean.
+
+#### Finding the Median
+
+To find the median of a vector, use the "median" procedure as found in the R script below.
+
+* Line 2: Attach the *faithful* data frame for the next two lines.
+* Lines 3-4: Calculate the medians for *eruptions* and *waiting*.
+* Line 5: Detach the *faithful* data frame.
+* Line 8: Attach the *iris* data frame for the next four lines.
+* Lines 9-12: Calculate the medians for various variables in the *iris* data frame.
+* Line 13: Detach the *iris* data frame.
+
+```{r}
+# Find medians for faithful
+attach(faithful)
+median(eruptions)
+median(waiting)
+detach(faithful)
+
+# Find medians for iris
+attach(iris)
+median(Sepal.Width)
+median(Sepal.Length)
+median(Petal.Width)
+median(Petal.Length)
+detach(iris)
+
+```
+
+
+### Mode
+
+The mode is used to describe the center of nominal or ordinal data and is nothing more than the item that was most commonly found in the vector. For example, if a question asked respondents to select their zip code from a list of five local codes and "12345" was selected more often than any other then that would be the mode for that item. Calculating the mode is no more difficult than counting the number of times the various values are found and choosing the one that is most frequent. As an example, the *mtcars* data frame lists the following for the number of cylinders in each car:
+
+```{r cyltable, echo=FALSE, message=FALSE, warnings=FALSE, results='asis', tut=FALSE}
+
+dt <- as.data.frame(table(mtcars$cyl))
+names(dt) <- c("Cylinders","N")
+
+kable(dt, "html") %>%
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                )
+
+```
+
+Since 14 cars have 8 cylinders and that is the most common number of cylinders, that would be the mode for this data item.
+
+It does not make much sense to calculate the mean or median for categorical data since those have no numeric value; however, reports frequently list the mean for Likert-style questions (ordered categorical data) by equating each level of response to a number and then calculating the mean of those numbers. For example, imagine that a student housing survey asked respondents to select among "Strongly Disagree, Disagree, Neutral, Agree, Strongly Agree" for a statement like "I like the food in the cafeteria." That is clearly ordered categorical data and while "Agree" is somehow better than "Disagree" it would be wrong to try to quantify that difference as "two points better." Sometimes, though, researchers will assign a point value to those responses like "Strongly Disagree" is one point, "Disagree" is two points, and so forth. Then they will calculate the mean for the responses on a survey item and report something like "The question about the food in the cafeteria had a mean of 3.24." It would be impossible to know how to interpret that sort of number. Are students 0.24 units above "Neutral" on liking the cafeteria food?
+
+There is no procedure for finding mode in this lab, but [Lab 5](#lab5) discusses frequency tables and by creating a frequency table it is easy to determine the mode of a variable. In fact, the *mtcars\$cylinders* table above was created with a *table* command in R and that was used to determine the mode for *cylinders*.
+
+## Activities
+
+### Activity 1: Central Measures
+
+Using the *cafe* data frame, find the mean and median for both *age* and *bill*. Include the answers to these problems in the deliverable document for this lab.
+
+```{r ex="act2.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act2.1", type="sample-code"}
+# Using the cafe data frame, find the mean and median for both age and bill.
+
+
+```
+
+### Activity 2: Trimmed Mean
+
+Using the *cafe* data frame, find the mean for *bill* with 5% trimmed from the data. Include that value in the deliverable document for this lab.
+
+```{r ex="act2.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act2.2", type="sample-code"}
+# Using the cafe data frame, find the mean for bill with 5% trimmed from the data.
+
+
+```
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 2," like "George Self Lab 2" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

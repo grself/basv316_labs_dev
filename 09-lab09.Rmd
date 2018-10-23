@@ -1,0 +1,228 @@
+# (PART) Hypothesis Testing {-} 
+
+# Parametric Hypothesis Testing {#lab9}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%",
+  message=FALSE,
+  warnings=FALSE
+)
+
+```
+
+```{r, include=FALSE}
+library(tutorial)
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+
+Researchers should always begin a project with a hypothesis and then gather data to see if the hypothesis supports an underlying theory in a process commonly called the "scientific method." Continuous data gathered as part of the research project are analyzed using parametric techniques and two of the most commonly-used tests are described in this lab. This lab starts with a discussion of "hypothesis" since that is key to both parametric and nonparametric testing.
+
+## Hypothesis {#lab9hypothesis}
+
+A hypothesis is an attempted explanation for some observation and is often used as a starting point for further investigation. For example, imagine that a physician notices that babies born of women who smoke seem to weigh less than for women who do not smoke. That could lead to a hypothesis like "smoking during pregnancy is linked to lighter birth-weights." As another example, imagine that a restaurant owner notices that tipping seems to be higher on weekends than through the week. That might lead to a hypothesis that "the size of tips is higher on weekends than weekdays." After creating a hypothesis, a researcher would gather data and then statistically analyze those data to determine if the hypothesis is valid. Additional investigation may be needed to explain why that observation is true. In a research project, there are usually two related competing hypotheses:
+the *Null Hypothesis* and the *Alternate Hypothesis*.
+
+* Null Hypothesis (abbreviated H~0~). This is sometimes described as the "skeptical" view; that is, the explanation for some observed phenomena was mistaken. For example, the null hypothesis for the smoking mother observation mentioned above would be "smoking has no effect on a baby's weight" and for the tipping observation would be "there is no difference in tipping on the weekend."
+* Alternate Hypothesis (abbreviated H~a~). This is the hypothesis that is being suggested as an explanation for the observed phenomenon. In the case of the smoking mothers mentioned, above the alternative hypothesis would be that smoking causes a decrease in birth weight. This is called the "alternate" because it is different from the status quo which is encapsulated in the null hypothesis.
+
+One commonly-used example of the difference between the null and alternate hypothesis comes from the trial court system. When a jury deliberates about the guilt of a defendant they start from a position of "innocent until proven guilty," which would be the null hypothesis. The prosecutor is asking the jury to accept the alternate hypothesis, or "the defendant committed the crime."
+
+For the most part, researchers will never conclude that the alternate hypothesis is true. There are always confounding variables that are not considered but could be the cause of some observation. For example, in the smoking mothers example mentioned above, even if the evidence indicates that babies born to smokers weigh less the researcher could not state conclusively that smoking caused that observation. Perhaps non-smoking mothers had better health care, perhaps they had better diets, perhaps they exercised more, or any of a number of other reasonable explanations not related to smoking. For that reason, the result of a research project is normally reported with one of two phrases:
+
+* *The null hypothesis is rejected*. If the evidence indicates that there is a significant difference between the status quo and whatever was observed then the null hypothesis would be rejected. For the "tipping" example above, if the researcher found a significant difference in the amount of money tipped on weekends compared to weekdays then the null hypothesis (that is, tipping is the same on weekdays and weekends) would be rejected.
+
+* *The null hypothesis cannot be rejected*. If the evidence indicates that there is no significant difference between the status quo and whatever was observed then the researcher would report that the null hypothesis could not be rejected. For example, if there was no significant difference in the birth weights of babies born to smokers and non-smokers then the researcher failed to reject the null hypothesis.
+
+Often, a research hypothesis is based on a prediction rather than an observation and that hypothesis can be tested. Imagine a hypothesis like "walking one mile a day for one month decreases blood pressure." A researcher could easily test this by measuring the blood pressure of a group of volunteers, have them walk a mile every day for a month, and then measure their blood pressure at the end of the experiment to see if there was any significant difference.
+
+## ANOVA
+
+An Analysis of Variance (ANOVA) is used to analyze the difference in more than two groups of samples that are normally distributed. For example, imagine three groups of students were in the same class and one group was not required to attend tutoring, a second group was required to attending tutoring once a week, and a third group was required to attend tutoring two or more times a week. The null hypothesis (H~0~) is "The amount of tutoring does not significantly change a student's score on the final exam." The alternate hypothesis (H~a~) is "More frequent tutoring significantly changes a student's score on the final test." After the final exam was graded, an ANOVA could be administered and if that showed the test scores for those three groups of students had a significant difference then the null hypothesis would be rejected in favor of the alternate hypothesis.
+
+The following one-line script generates an `ANOVA` from the *morley* data frame. `ANOVA` requires the two variables being compared to be input as a linear model (`lm`) formula in the form of y ~ x, where y is the dependent variable (continuous data) and x is the independent variable (the groups used to divide the continuous data). Also the data source is specified with a "data =" parameter.
+
+```{r}
+# ANOVA
+anova(lm(Speed ~ Expt, data = morley))
+```
+
+The `ANOVA` function returns a lot of information, most of which is beyond the scope of this lab: 
+
+```
+> # ANOVA
+> anova(lm(Speed ~ Expt, data = morley))
+Analysis of Variance Table
+
+Response: Speed
+          Df Sum Sq Mean Sq F value    Pr(>F)
+Expt       1  72581   72581  13.041 0.0004827 ***
+Residuals 98 545444    5566
+---
+Signif. codes: 0 *** 0.001 ** 0.01 * 0.05 . 0.1 1
+```
+
+While an `ANOVA` function returns information that would be useful in a more thorough statistical analysis, this lab is only concerned with the p-value, 0.0004827, which is labeled "Pr(>F)" and is found near the end of Line 6. Following that p-value, R helpfully prints a code to aid in determining the significance of the result, three asterisks in this case. The last line in the results then lists the meaning of the various codes used. P-values that fall between 0 and 0.001 are marked with three asterisks, as in this case, so it is significant at the 0.1% level (0.001), the greatest possible level. If the p-value had been 0.03 then it would have been marked with one asterisk.
+
+## T-test
+
+A t-test is used to analyze the difference in two groups of samples that are normally distributed. One example of a t-test is to compare the spending habits of two similar groups of people. For example, do the residents of Tucson spend more on dining out than the residents of Phoenix? The null hypothesis (H~0~) is "People in Tucson and Phoenix spend the same amount of money when dining out." The alternate hypothesis (H~a~) is "People in Tucson and Phoenix spend different amounts of money when dining out." Imagine that the dining bills of 100 people from both cities were recorded and it was discovered that the mean bill in Phoenix is $15.13 and in Tucson is $12.47. If a t-test determines that there was a significant difference in those two numbers the null hypothesis would be rejected.
+
+The following one-line script generates a `t.test` from the *npk* data frame. `t.test` requires the two variables being compared to be input as a formula in the form of y ~ x, where y is the dependent variable (continuous data) and x is the independent variable (the groups used to divide the continuous data). Also the data source is specified with a "data =" parameter.
+
+```{r}
+# T-Test (Independent)
+t.test(yield ~ N, data = npk)
+
+```
+
+The `t.test` function returns a lot of information, most of which is beyond the scope of this lab: 
+
+```
+> # T-Test (Independent)
+> t.test(yield ~ N, data = npk)
+
+  Welch Two Sample t-test
+
+data: yield by N
+t = -2.4618, df = 21.88, p-value = 0.02218
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -10.3496778 -0.8836555
+sample estimates:
+mean in group 0 mean in group 1
+       52.06667        57.68333
+```
+
+While a `t.test` function returns information that would be useful in a more thorough statistical analysis, this lab is only concerned with the p-value, 0.02218, which is found at the end of Line 6. On Line 7 R helpfully prints the alternative hypothesis and observes that the difference in the means for the two groups is not equal to 0, so the null hypothesis would be rejected.
+
+## Activities
+
+### Activity 1: ANOVA
+
+Using the *cafe* data, conduct an ANOVA and report the p-value for the following variables. Note: in the document submitted for this lab, Activity 1 should have a simple listing, something like illustrated here. (Notes: these are not the correct answers to the listed tests. To indicate tiny values use scientific notation in a form like 1.6e-05 since that is easier to type.) Record the p-values in the deliverable document for this lab.
+
+1. 6.352e-09
+2. 0.0059
+3. 4.028e-06
+4. 0.3275
+
+Here are the variables to test:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Num = c("1",
+          "2",
+          "3",
+          "4"
+          ),
+  y = c(
+    "Length",
+    "Miles",
+    "Age",
+    "Tip"),
+  x = c(
+    "Day",
+    "Party Size (ptysize)",
+    "Food",
+    "Service (svc)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "ANOVA Lab") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center") %>%
+  column_spec(1, bold = T, border_right = T)
+```
+
+```{r ex="act9.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act9.1", type="sample-code"}
+# Using the cafe data frame, conduct an ANOVA on the following variables.
+
+# Length vs. Day
+
+# Miles vs. Party Size (ptysize)
+
+# Age vs. Food
+
+# Tip vs. Service (svc)
+
+```
+
+### Activity 2: T-test
+
+Using the *cafe* data, conduct a t.test (independent) and report the p-value for the following variables. Note: in the document submitted for this lab, Activity 2 should have a simple listing, something like illustrated here. (Notes: these are not the correct answers to the listed tests. To indicate tiny values use scientific notation in a form like 1.6e-05 since that is easier to type.) Record the p-values in the deliverable document for this lab.
+
+1. 6.352e-09
+2. 0.0059
+3. 4.028e-06
+4. 0.3275
+
+Here are the variables to test:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Num = c("1",
+          "2",
+          "3",
+          "4"
+          ),
+  y = c(
+    "Miles",
+    "Length",
+    "Bill",
+    "Tip"),
+  x = c(
+    "Recommend (recmd)",
+    "Preference (pref)",
+    "Recommend (recmd)",
+    "Preference (pref)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "T.test Lab") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center") %>%
+  column_spec(1, bold = T, border_right = T)
+```
+
+```{r ex="act9.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act9.2", type="sample-code"}
+# Using the cafe data frame, conduct a T-test on the following variables.
+
+# Miles vs. Recommend (recmd)
+
+# Length vs. Preference (pref)
+
+# Bill vs. Recommend (recmd)
+
+# Tip vs. Preference (pref)
+
+```
+
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 9," like "George Self Lab 9" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

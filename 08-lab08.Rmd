@@ -1,0 +1,524 @@
+# Visualizing Data {#lab8}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%", 
+  message=FALSE,
+  warnings=FALSE
+)
+
+```
+
+```{r, include=FALSE}
+library(tutorial)
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+
+[Lab 4](#lab4) and [Lab 6](#lab6) described various visualization techniques for descriptive and frequency data. This lab considers visualization techniques for quantitative data, which are usually continuous in nature.
+
+## Visualizing Data
+
+### Histogram
+
+A histogram is a graph that shows the disribution of data that are continuous in nature, for example, age or height. A histogram resembles a bar chart but there is an important difference: a histogram is used for continuous data while a bar chart is used for categorical data. To emphasize that difference, histograms are normally drawn with no space between the bars (the data are continuous along the entire x-axis) while bar charts are normally drawn with a small space between bars (the data are categorical along the x-axis). As an example of a histogram, the next figure shows the New York city high temperature from May to September 1973 from the *airquality* data frame.
+
+```{r fig0801,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+hist(airquality$Temp,
+     main = "NY Temperature",
+     xlab = "Temperature",
+     ylab = "Frequency",
+     #labels = TRUE, # Add labels to each bar
+     breaks = 12,
+     freq = TRUE,
+     col = cm.colors(9)
+     )
+```
+
+
+Notice that there is not a separate bar for each temperature; rather, R has clustered five temperatures into a single bar. Thus, there is a bar that combines the temperatures 70-74 and not separate bars for each of those temperatures. This histogram helps researchers determine if temperature is normally distributed, that is, does it display a typical "bell" curve. While there are levels for each group of temperatures it should be fairly obvious that there are more temperatures around the 80° level than at either extreme and this histogram does indicate that the data are normally distributed.
+
+As another example, the following figure shows a histogram for the body temperature of a beaver recorded every 10 minutes over the course of several hours. This histogram shows normally-distributed data though there is an outlier at a temperature of 37.6°.
+
+```{r fig0802,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+hist(beaver1$temp,
+     main = "Beaver Body Temperature",
+     xlab = "Temperature",
+     ylab = "Frequency",
+     #labels = TRUE, # Add labels to each bar
+     breaks = 9,
+     freq = TRUE,
+     col = cm.colors(13)
+)
+
+```
+
+
+Histograms can also indicate data that are skewed and this would be important to researchers during a project’s exploratory phase. Consider, for example, the following figure which is the shape of petroleum rock samples in the rock data frame. While this histogram still indicates a normal distribution with levels falling off from a peak, there is a longer "tail" to the right so the data have a positive skew.
+
+```{r fig0803,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+hist(rock$shape,
+     main = "Rock Shape",
+     xlab = "Peri / sq root area",
+     ylab = "Frequency",
+     #labels = TRUE, # Add labels to each bar
+     breaks = 12,
+     freq = TRUE,
+     col = cm.colors(9)
+)
+
+```
+
+
+Finally, consider the histogram in the following figure. This shows a bi-modal distribution where there are two clear peaks in the data. It is critical for researchers to know that the data are bi-modal before they begin analyzing it since having two modes can cause certain statistical tests to fail.
+
+```{r fig0804,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+hist(rock$peri,
+     main = "Rock Perimeter",
+     xlab = "Perimeter",
+     ylab = "Frequency",
+     #labels = TRUE, # Add labels to each bar
+     breaks = 16,
+     freq = TRUE,
+     col = cm.colors(10)
+)
+
+```
+
+The following script creates an example histogram.
+
+* Line 2: This is the beginning of the histogram function (it ends on Line 8). For this histogram the *Speed* variable from the *morley* data frame is specified as the data source for the histogram.
+* Lines 3-5: This creates the main title of the histogram along with the labels for the x-axis and y-axis.
+* Line 6 For a histogram, R must analyze the values contained in a variable and create "bins" for those values. That means that many of the continuous values will be grouped into a single bin for analysis. The "breaks" parameter tells R how many breaks to allow in the variable. In this case, eight breaks are specified, which would create nine bins. R will analyze the data and use the "breaks" parameter as a "suggestion"" and will only use that number of breaks if it makes sense for the data being graphed. Often, changing the number of breaks by just one or two will not change the histogram produced so researchers should play around with the "breaks" number to get the best possible representation of the data.
+* Line 7: This specifies that 10 colors will be used from the "cm.color" palette to shade the various bars in the histogram. Researchers need to experiment a bit with the color palette and number of colors to get the best result; however, "cm.color" along with the number of bars in the histogram seems to work well.
+
+
+```{r}
+# Histogram
+hist(morley$Speed,
+  main = "Morley's Experiment",
+  xlab = "Speed",
+  ylab = "Frequency",
+  breaks = 8,
+  col = cm.colors(10)
+)
+
+```
+
+<div class="grsnote">
+The DataCamp interface generates graphics in a *Plots* tab but because of the size of the interface those plots are "squished" and impossible to read. Click the double-headed arrow button on the *Plots* tab to open the graph in a larger window for evaluation and copying to a document. If the graphic does not open in a larger window then temporarily pause the browser's pop-up blocker.
+</div>
+
+### Density Plot
+
+A density plot provides the same information as a histogram but it is smoothed out so it is easier to read. Here is the same NY City temperature data from an earlier histogram but drawn as a density plot.
+
+```{r fig0805,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(density(airquality$Temp),
+     main = "NY Temperature",
+     xlab = "Temperature",
+     ylab = "Density",
+     lwd = 2,
+     bty = "l"
+)
+
+```
+
+
+Given the previous plot it is natural to wonder, "What is density?" This is a calculated value such that the total area under the curve is assumed to be one and then each point along the x-axis is calculated to contribute the correct proportional amount to that total density. For many purposes it is adequate to just consider a density plot to be a smoothed histogram. As just one other example, following is a density plot of the bi-modal histogram presented earlier. The density plot makes the bi-modal nature of the data very evident.
+
+```{r fig0806,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(density(rock$peri),
+     main = "Rock Perimeter",
+     xlab = "Perimeter",
+     ylab = "Frequency",
+     lwd = 2,
+     bty = "l"
+)
+
+```
+
+The following script creates a density plot of the *speed* variable in the *morley* data frame. The lines are very similar to the last script except R plots the `density` of the data in Line 2 rather than just the values.
+
+```{r}
+# Density Plot
+plot(density(morley$Speed),
+  main = "Morley's Experiment",
+  xlab = "Speed",
+  ylab = "Density",
+  lwd = 2,
+  col = "blue"
+)
+```
+
+### Line Graph
+
+Line graphs display the frequency of some value in a linear form that makes trend detection easier. These types of graphs are especially useful with what is called "time series" data; that is, data that are gathered over a long period of time. As an example, consider the following from the airmiles dataset which charts the number of passenger miles on US commercial airlines from 1937 to 1960.
+
+```{r fig0807,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(airmiles,
+     main = "Passenger Air Miles",
+     xlab = "Year",
+     ylab = "Air Miles",
+     type="l",
+     lwd = 3,
+     col = "blue"
+     )
+
+```
+
+The following figure shows the number of accidental deaths in the United States from 1973 until 1979 by month taken from the *USAccDeaths* data frame. This line graph clearly shows a seasonal difference where there are more accidental deaths in the summer months than winter and detecting seasonal variation is one of the strengths of a line graph.
+
+```{r fig0808,fig.width=6,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(USAccDeaths,
+     main = "US Accidental Deaths",
+     xlab = "Year",
+     ylab = "Number of Deaths",
+     type="l",
+     lwd = 2,
+     col = "dark green"
+)
+
+```
+
+As one final example, the following figure shows the approval rating for US Presidents from 1945 until 1975 taken from the *presidents* data frame. This line graph shows a very high approval rating in 1945 (Roosevelt at the end of WWII) with dips in the early 1950’s (Truman and the Korean Conflict) and about 1974 (Watergate and Nixon’s resignation). Notice that there are two gaps in the line (late 1940’s and 1973) caused by missing data in the data frame.
+
+```{r fig0809,fig.width=6,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(presidents,
+     main = "US Presidential Approval",
+     xlab = "Year",
+     ylab = "Rating",
+     type="l",
+     lwd = 2,
+     col = "purple"
+)
+
+```
+
+Line graphs like those shown above are very useful for detecting a change in some variable, especially over time. The following script creates a line graph of the monthly number of lung disease deaths in the United Kingdom between 1974 and 1979 as found in the *ldeaths* data frame. It shows a very interesting cycle where there are consistently more deaths in the winter months than the summer months.
+
+* Line 2: The `plot` function is called for the *ldeaths* data frame. By itself, `plot` will create a scatter plot but Line 8 in this script specifies a line graph.
+* Lines 3-5: This creates the main title of the line graph along with the labels for the x-axis and y-axis.
+* Line 6: This specifies the type of line graph wanted. The possible values are: "p" for points, "l" for lines, "b" for both, "c" for the lines part alone of "b", "o" for both ’overplotted,’ "h" for ’histogram’ like (or ’high-density’) vertical lines, "s" for stair steps, "S" for other steps, "n" for no plotting. Researchers could quickly try several different settings to determine the best way to present the data.
+* Line 7: The *lwd* parameter sets the width of the line. The default value is 1 so this line specifies a double-width line in order to make it easier to see.
+* Line 8: This sets the color of the line to red in order to set it off from the axis and text.
+
+```{r}
+# Line Graph
+plot(ldeaths,
+  main = "Lung Disease Deaths",
+  xlab = "Month",
+  ylab = "Number",
+  type="l",
+  lwd = 2,
+  col = "red"
+)
+```
+
+### Plot
+
+Plots (often called "scatter plots") are used to show how two different variables are related. Scatter plots are often used in connection with correlation where they visually indicate the correlation between two variables. For example, The following figure is the plot of stopping distance vs. speed from the *cars* data frame.
+
+```{r fig0810,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(cars,
+     main = "Stopping Distances",
+     xlab = "Speed",
+     ylab = "Stopping Distance"
+     )
+```
+
+The previous figure shows that as a car’s speed increases the stopping distance also increases, which is exactly what would be expected. (Note: this data were gathered on cars in the 1920s.) Often, a line of best fit is included with a plot to better visualize the relationship between the two variables, as illustrated in the following figure.
+
+```{r fig0811,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(cars,
+     main = "Stopping Distances",
+     xlab = "Speed",
+     ylab = "Stopping Distance"
+)
+abline(lm(cars$dist ~ cars$speed),
+       col = "Blue",
+       lwd = 2
+       )
+```
+
+As a second example, The following figure is a plot of the eruption time for Old Faithful as a function of the waiting time between eruptions.
+
+```{r fig0812,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+plot(faithful$eruptions ~ faithful$waiting,
+     main = "Old Faithful Eruptions",
+     xlab = "Waiting Time (Min)",
+     ylab = "Eruption Time (Min)"
+)
+```
+
+The previous figure shows that as the time between eruptions increases the time that the eruption lasts also increases. Notice that this scatter plot also suggests that the data are bi-modal since there are two clusters of points and a researcher would want to explore that matter before doing much else with the data.
+
+The following script creates a simple plot using the *swiss* data frame.
+
+* Line 2: This starts the `plot` function. Like many R functions, `plot` requires a formula input in the form of y ~ x where the dependent variable (the y-axis) is first in the formula and the independent variable (the x-axis) is second. For this plot, *Education* is the independent variable and will be on the x-axis while *Fertility* is the dependent variable on the y-axis. The researcher was answering the question "Does education level affect the number of children people have?"
+* Lines 3-6: This creates the main title of the line graph, the labels for the x-axis and y-axis, and the color used for the plot points. This is similar to the `plot` scripts seen earlier in this lab.
+
+```{r}
+# Simple Plot
+plot(swiss$Fertility ~ swiss$Education,
+  main = "Swiss Indicators",
+  xlab = "Education",
+  ylab = "Fertility",
+  col = "blue"
+)
+```
+
+The following script creates two plots with lines of best fit.
+
+* Lines 2-7: This starts the `plot` function which, like many in R, requires a formula input in the form of y ~ x where the dependent variable (the y-axis) is first in the formula and the independent variable (the x-axis) is second. For this plot, the *attitude* data frame is used and *rating* is the independent variable on the x-axis while *complaints* is the dependent variable on the y-axis. The researcher was answering the question "Do employees with higher overall ratings handle complaints better?" The parameters of the `plot` function are defined for several scripts in this lab and are not further discussed here.
+* Line 8: This starts the `abline` function that ends on line 10. `Abline` overlays a line "from point A to point B" on an existing plot. In this case, the line to be drawn is calculated with the `lm` function, which calculates the slope and y-intercept of the line of best fit for the two specified vectors.
+* Lines 9-10: These are the parameters for the line of best fit drawn on the plot.
+* Lines 25-21: This is a second example of a plot with a line of best fit. This example uses Ozone and Wind from the *airquality* data frame.
+
+```{r}
+# Line of Best Fit
+plot(attitude$complaints ~ attitude$rating,
+main = "Attitude Data",
+xlab = "Overall Rating",
+ylab = "Complaints",
+col = "dark blue"
+)
+abline(lm(attitude$complaints ~ attitude$rating),
+col = "dark green",
+lwd = 2
+)
+
+plot(airquality$Ozone ~ airquality$Wind,
+main = "Air Quality",
+xlab = "Wind Speed",
+ylab = "Ozone Level",
+col = "dark red"
+)
+abline(lm(airquality$Ozone ~ airquality$Wind),
+col = "dark blue",
+lwd = 2
+)
+```
+
+### Q-Q Plot
+
+Very often, researchers in the exploratory phase of a project need to know whether a data frame is normally distributed. Creating a histogram or density plot is very helpful in that regard, but a Q-Q
+("Quantile-Quantile") Plot is a typical method used to determine if a data frame is normally distributed. The following figure is a Q-Q plot of the New York City temperatures in the *airquality* data frame.
+
+```{r fig0815,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+qqnorm(airquality$Temp,
+       main = "QQ Plot: NY City Temps"
+       )
+qqline(airquality$Temp,
+       col = "Blue",
+       lwd = 2
+       )
+```
+
+An absolutely perfect normal distribution would generate a straight line Q-Q plot and the blue line in the previous figure is ideal. Interpreting a Q-Q plot is more art than science but as long as most values are near the ideal line then the data are considered normally distributed. The following figure is a Q-Q plot for the Old Faithful eruption. The dot plot for this data can be found earlier in this lab.
+
+```{r fig0816,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+qqnorm(faithful$eruptions,
+       main = "QQ Plot: Old Faithful"
+)
+qqline(faithful$eruptions,
+       col = "Dark Green",
+       lwd = 2
+)
+```
+
+The above plot shows a typical bi-modal pattern. On the left side of the plot is a reasonably flat area from -3 to -0.5 on the x-axis and then the plot skips upward and creates a second reasonably flat area between 0.5 and 3. Imagine two parallel lines running through the lower and upper parts of the plot and then notice that the green "ideal" line does not get very close to the slope of either of those two lines. This Q-Q plot shows that the data are not normally distributed. The following figure shows a curved Q-Q plot that is typical for a data frame that is skewed. In this case, the plotted sunspot data have a heavy positive skew which is indicated by the long "tail" on the left side of the plot. That skew should be verified with a histogram or density plot.
+
+```{r fig0817,fig.width=4.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+
+qqnorm(sunspots,
+       main = "QQ Plot: Sunspots"
+)
+qqline(sunspots,
+       col = "Red",
+       lwd = 2
+)
+
+```
+
+The following script creates two Q-Q plots.
+
+* Lines 2-4: This executes the `qqnorm` function and passes that function the weight variable from the *chickwts* data frame. This function draws the Q-Q Plot. The only parameter needed is *main*, which adds the title to the plot.
+* Lines 5-7: This executes the `qqline` function and passes that function the weight variable from the *chickwts* data frame. This function draws the straight line that indicates a perfect Q-Q plot. The only parameters passed to the function in this script is to set the color to blue and the size to 2.
+* Lines 10-16: This creates a second Q-Q plot for the Uptake variable in the CO2 data frame. The parameters are the same as for the first Q-Q plot except a different line color was used.
+
+```{r}
+# Q-Q Plots
+qqnorm(chickwts$weight,
+  main = "QQ Plot: Chick Weights"
+)
+qqline(chickwts$weight,
+  col = "blue",
+  lwd = 2
+)
+
+qqnorm(CO2$uptake,
+  main = "QQ Plot: CO2 Uptake"
+)
+  qqline(CO2$uptake,
+  col = "red",
+  lwd = 2
+)
+```
+
+## Activities
+
+<div class="grswarn">
+Important Note: The DataCamp interface generates graphics in a *Plots* tab but because of the size of the interface those plots are "squished" and impossible to read. To generate a larger version of the graph for submission, click the double-headed arrow button along the bottom of the *Plots* tab to open the graph in a larger window and then copy/paste that larger image to the deliverable document for grading. If the graphic does not open in a larger window then temporarily pause the browser's pop-up blocker.
+</div>
+
+### Activity 1: Histogram
+
+Using the *cafe* data frame, create a histogram of *age*. The histogram should:
+
+1. Have a title of "Activity 1: Histogram"
+2. The x-axis should have this label: "Age"
+3. The y-axis should have this label: "Frequency"
+4. Use 10 breaks
+5. Use any color palette desired
+
+Copy/paste the histogram in the deliverable document for this lab.
+
+```{r ex="act8.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act8.1", type="sample-code"}
+# Using the cafe data frame, create a histogram of age.
+
+```
+
+### Activity 2: Density Plot
+
+Using the *cafe* data frame, create a density plot of *age*. The plot should:
+
+1. Have a title of "Activity 2: Density Plot"
+2. The x-axis should have this label: "Age"
+3. The y-axis should have this label: "Density"
+4. Use a line width of 2
+5. Use any color desired
+
+Copy/paste the density plot in the deliverable document for this lab.
+
+```{r ex="act8.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act8.2", type="sample-code"}
+# Using the cafe data frame, create a density plot of age.
+
+```
+
+### Activity 3: Line Graph
+
+Create a line graph of the *lynx* data frame. The plot should:
+
+1. Have a title of "Activity 3: Line Graph"
+2. The x-axis should have this label: "Year"
+3. The y-axis should have this label: "Number"
+4. Use a plot type of "l"
+5. Use a line width of 2
+6. Use the color "dark green"
+
+Copy/paste the line graph in the deliverable document for this lab.
+
+```{r ex="act8.3", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act8.3", type="sample-code"}
+# Create a line graph of the lynx data frame. 
+
+```
+
+### Activity 4: Simple Plot
+
+Using the *cafe* data frame, create a simple plot with *length* on the x-axis and *bill* on the y-axis to see if there is a relationship between the length of the meal and the bill. The plot should:
+
+1. Have a title of "Activity 4: Simple Plot"
+2. The x-axis should have this label: "Length of Meal"
+3. The y-axis should have this label: "Bill"
+4. Use the color "dark red"
+
+Copy/paste the simple plot in the deliverable document for this lab.
+
+
+```{r ex="act8.4", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act8.4", type="sample-code"}
+# Using the cafe data frame, create a simple plot of length (x) vs. bill (y).
+
+```
+
+### Activity 5: Line of Best Fit
+
+Using the *cafe* data frame, create a simple plot with *length* on the x-axis, *bill* on the y-axis, and a line of best fit to see if there is a relationship between the length of the meal and the bill. The plot should:
+
+1. Have a title of "Activity 5: Line of Best Fit"
+2. The x-axis should have this label: "Length of Meal"
+3. The y-axis should have this label: "Bill"
+4. Use the color "dark red"
+5. Add a line of best fit with a width of 2 and color of "blue"
+
+Copy/paste the plot in the deliverable document for this lab.
+
+```{r ex="act8.5", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act8.5", type="sample-code"}
+# Using the cafe dataset, create a simple plot of length (x) vs. bill (y) and a line of best fit.
+
+```
+
+
+### Activity 6: Q-Q Plot
+
+Using the *cafe* data frame, create a Q-Q plot of *age*. The plot should:
+
+1. Have a title of "Activity 6: Q-Q Plot"
+2. A Q-Q line should be added with a color of blue and a weight of 2
+
+Copy/paste the plot in the deliverable document for this lab.
+
+```{r ex="act8.6", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act8.6", type="sample-code"}
+# Using the cafe dataset, create a Q-Q plot of age.
+
+```
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 8," like "George Self Lab 8" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

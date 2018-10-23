@@ -1,0 +1,294 @@
+# Visualizing Descriptives {#lab4}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%", 
+  message=FALSE,
+  warnings=FALSE
+)
+```
+
+```{r, include=FALSE}
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+R makes it easy to calculate various data descriptives, as covered in [Lab 3](#lab3) and [Lab 4](#lab4); however, most people find it easier to understand data descriptives when those data are presented graphically. Fortunately, R has a great graphic tool for visualizing data descriptives: Boxplot (sometimes called a “Box and Whisker” plot). A Boxplot graphically illustrates Q1, the mean, the median, Q3, outlier boundaries, and outliers (if any are present).
+
+## About Visualizations
+
+This manual includes three different labs on data visualization because it is a critically important tool for data analysis. Visualizations are useful in two different phases of the analysis process: exploration and explanation. In the exploration phase, researchers are looking for interesting relationships in the data and those relationships are often difficult to detect in a table full of numbers but a visualization makes them instantly clear. As an example, here are two ways to look at the *trees$Volume* data.
+
+```{r echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+print(trees$Volume)
+```
+
+
+The above table shows the measured volume for 31 Black Cherry Trees. Researchers looking at these numbers would not be able to detect very much. However, a simple box plot reveals a few interesting details, such as the presence of one upper outlier and that the data are positively skewed (the dark "median" line is low in the box).
+
+```{r fig0401,fig.width=4.5,fig.height=4,fig.align="center", fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+boxplot(trees$Volume,
+        main="Black Cherry Trees",
+        ylab="Volume (cubic feet)"
+     )
+```
+
+
+Visualizations like this make it easy to detect a patterns that are not obvious from the data table and researchers commonly use these types of visualizations in the *exploratory* phase of analysis. Not all visualizations are appropriate in the *explanatory* phase where research findings are revealed to the general public and for that phase of the project visualizations that are easier to understand should be employed. Researchers must carefully consider the many types of visualizations and which are most appropriate for exploration or explanation to be certain that the visualizations help rather than hinder understanding.
+
+## Boxplots
+
+Following is the summary data for *hp* from the *mtcars* data frame along with the boxplot for that same data.
+
+```{r fig0402, fig.width=3.5,fig.height=4,out.width="40%", fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+summary(mtcars$hp)
+
+boxplot(mtcars$hp, 
+        main="MTCARS Data",
+        ylab="Horsepower")
+```
+
+In the boxplot, the median is indicated by a dark line at 123, Q1 is 96.5 (the lower edge of the box) and Q3 is 180 (the upper edge of the box). The following equations show how the whiskers are placed for the boxplot. *Note: this calculation was first presented and explained in [Lab 3](#lab3outliers).*
+
+$$
+\begin{aligned}
+Lower &= Q1 - (1.5 * IRQ) \\
+Lower &= 96.5 - (1.5 * 83.5) \\
+Lower &= 96.5 - 125.25 \\
+Lower &= 0 
+\end{aligned}
+$$
+
+Since the smallest value in the vector, 52, is larger than the calculated lower boundary, 0, the lower whisker is placed at 52.
+
+$$
+\begin{aligned}
+Upper &= Q3 + (1.5 * IRQ) \\
+Upper &= 180.0 + (1.5 * 83.5) \\
+Upper &= 180.0 + 125.25 \\
+Upper &= 305.25
+\end{aligned}
+$$
+
+Since the calculated upper boundary, 305.25, is smaller than the largest value in the vector, 335.0, the upper whisker is placed at the largest data value that is smaller than or equal to 305.25, or 264 for this data vector.
+
+The circle above the boxplot represents an outlier, which is 335 in this vector. If the data are a normal distribution then the whiskers will usually enclose all values in the vector and outliers will be rare.
+
+### Generate a Simple Boxplot
+
+The following script generates for different boxplots for four different variables in the *rock* data frame.
+
+* Line 1: The *rock* data frame is attached to make the other functions in this script easier to write.
+* Line 4: Print the summary information for the *area* vector.
+* Line 5: Create the boxplot for *area*. Note that the boxplot includes a `main` attribute which adds a title above the boxplot.
+* Lines 7-17 These are repetitions of Lines 3-5 for three other vectors in the *rock* data frame.
+* Line 19 This detaches the *rock* data frame. This is not actually necessary since the script is ending anyway, but it is a good practice to always detach data frames.
+
+
+```{r}
+attach(rock)
+
+# Summary for area
+print(summary(area))
+boxplot(rock$area, main="Rock Area")
+
+# Summary for peri
+print(summary(peri))
+boxplot(peri, main="Rock Peri")
+
+# Summary for shape
+print(summary(shape))
+boxplot(shape, main="Rock Shape")
+
+# Summary for perm
+print(summary(perm))
+boxplot(perm, main="Rock Perm")
+
+detach(rock)
+```
+
+Given these four boxplots, “Rock Peri” has the most symmetrical data since the box and whiskers are fairly equally distributed around the median, “Rock Perm” is the most skewed since so much of the plot is above the median, and “Rock Shape” has three upper outliers.
+
+<div class="grsnote">
+The DataCamp interface generates graphics in a *Plots* tab but because of the size of the interface those plots are "squished" and impossible to read. Click the double-headed arrow button on the *Plots* tab to open the graph in a larger window for evaluation and copying to a document. If the graphic does not open in a larger window then temporarily pause the browser's pop-up blocker.
+</div>
+
+## Outliers Revisited
+
+A method to calculate the upper and lower boundaries for outliers was presented in [Lab 3](#lab3outliers); however, *R* includes a function that displays the values used to create a boxplot, including outliers, so laborious calculations are not necessary. As an example, consider the boxplot for *Rock Shape* that was created above.
+
+```{r fig0403,fig.width=4.5,fig.height=4,fig.align="center", fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+attach(rock)
+
+# Summary for shape
+boxplot(shape, main="Rock Shape")
+
+detach(rock)
+```
+
+To determine what values *R* used to generate the plot, attach the *rock* data frame and then enter `boxplot.stats(shape)` to get this result.
+
+
+```{r boxPlot_stats, echo=FALSE, message=FALSE, warnings=FALSE, results='asis', tut=FALSE}
+attach(rock)
+
+# Summary for shape
+boxplot.stats(shape)
+
+detach(rock)
+```
+
+
+This output has four different lines:
+
+
+1. **$stats** These are the locations for the five horizontal lines in the plot, so the lower whisker is at 0.0903 on the y-axis, Q1 (the lower edge of the box) is at 0.1621 on the y-axis, the median (the heavy line in the middle of the box) is at 0.1988 on the y-axis, Q3 (the upper edge of the box) is at 0.2626 on the y-axis, and the upper whisker is at 0.3412 on the y-axis.
+
+2. **$n** is the number of observations in the vector, or 48 in this case since 48 trees were measured.
+
+3. **$conf** is the value on the y-axis that would be used to mark a 95% confidence level, but that statistic is not used in this lab.
+
+4. **$out** These are the values of the outliers and the *rock shape* vector has three: 0.438712, 0,464125, and 0.420477. Thus, to find the outliers of a vector all that is needed is to use the fourth output line of the `boxplot.stats()` function. If there are no outliers then that line reports *numeric(0)* to indicate that there are zero outliers.
+
+## Grouped Boxplots
+
+Boxplots become much more useful when more than one data item is plotted side-by-side for comparison. For example, the following boxplots are helpful in determining if there is a difference in automobile weight by the number of cylinders in the engine.
+
+```{r fig0404, fig.width=5,fig.height=4, fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+boxplot(wt ~ cyl, data = mtcars,
+        ylab = "Weight (x1000 lbs)",
+        xlab = "Number of Cylinders",
+        main = "Weight by Cylinders")
+```
+
+By comparing the three boxplots it is easy to see that the more cylinders an engine has then the more the automobile weighs since the plots tend to be “higher” as the number of cylinders increases. Also notice that the plot for 8-cylinder cars does not have an upper whisker since it is exactly the same as Q3 but it does include outliers. It is also interesting to note that the whiskers for the three plots overlap, indicating, for example, that some 4-cylinder cars are heavier than some 6-cylinder cars.
+
+## Color {#lab4color}
+
+R permits designers to use a number of different color pallets to make a graph easier to understand. Here are the pallets available in base R:
+
+```{r fig0405, fig.width=5,fig.height=5, fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+d <- as.table(c(1,1,1,1,1,1,1,1,1,1))
+par(mfrow = c(5,1), mai = c(0.35,0.35,0.35,0.35), cex.main = 1.5)
+barplot(d, col = cm.colors(10), axisnames = FALSE, axes = FALSE, main = "cm (cyan-magenta)")
+barplot(d, col = heat.colors(10), axisnames = FALSE, axes = FALSE, main = "heat")
+barplot(d, col = rainbow(10), axisnames = FALSE, axes = FALSE, main = "rainbow")
+barplot(d, col = terrain.colors(10), axisnames = FALSE, axes = FALSE, main = "terrain")
+barplot(d, col = topo.colors(10), axisnames = FALSE, axes = FALSE, main = "topo")
+
+```
+
+
+Adding the “heat” color pallet to the grouped boxplot generated earlier in this lab makes it easier to read due to the presence of colors.
+
+```{r fig0406, fig.width=5,fig.height=4, fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+boxplot(wt ~ cyl, data = mtcars,
+        ylab = "Weight (x1000 lbs)",
+        xlab = "Number of Cylinders",
+        main = "Grouped Boxplots With Heat Color", 
+        col = heat.colors(3)
+        )
+```
+
+
+When using color with graphics it is important for the researcher to keep two points in mind.
+
+* First, it is estimated that about 8% of males and 0.5% of females are unable to distinguish between two or more colors, a condition that is often called “color blindness.”
+
+* Second, if the research is ever printed in a black-and-white form then all color information is lost.
+
+For these two reasons, it is probably best to not rely on color alone to provide information to the reader; rather, color should be used to enhance the understanding of a chart without being the sole source of information for that chart. 
+
+## Generate Grouped Boxplots
+
+Grouped boxplots are easy to create with R and the following script generates three examples.
+
+* Lines 2-5: This is one long command that is broken over several lines to make it easier to read. Note that R does not require any sort of special “line continuation” character at the end of each line. As long as the parentheses started after the `boxplot` keyword does not close then R will continue reading that command on the next line.
+* Line 2: *Temp ~ Month* This tells R to calculate the boxplot for the Temperature variable but group those temperatures by Month. It is important to remember the order for these two variables. First is the continuous data that should be analyzed and second is the grouping variable.
+* Line 3: *data = airquality* In previous labs, the data frame name was prepended to the variable name using the $ operator or by attaching the data frame, and those methods could still be used for boxplots. However, many R functions are designed to enter only the variable names and then specify the data frame later in the function. In this case, the *airquality* data frame is identified as the source for the two variables being plotted.
+* Line 4: *main = “Temp By Month”* This is the main title for the boxplot and is automatically printed in large font abovethe boxplot. R has a number of other formatting options available and several will be covered in later labs.
+* Line 5: *col = rainbow(8)* This sets the color pallet to rainbow and instructs R to use eight colors from that pallet though the colors actually used are automatically selected by R. It is often useful to experiment with the number of colors requested from the pallet since the colors selected will change depending on the number requested and some combinations may be more useful than others.
+* Lines 7-11: These are similar to Lines 2-5 but notice how the color pallet is selected. Selecting the “rainbow” pallet (Line 5) has a slightly different format than the other pallets.
+* Lines 13-18: These lines are similar to Lines 7-11 but a new attribute was specified: *las = 2*. For this boxplot the groups are names of chicken feed rather than numbers or single letters. When those names are printed horizontally they “run into each other” and become unreadable. The *las = 2* specification turns those labels 90° so they do not interfere with each other.
+
+```{r}
+# Boxplot of airquality data
+boxplot(Temp ~ Month, 
+        data = airquality,
+        main = "Temp By Month", 
+        col = rainbow(8))
+
+# Boxplot of warpbreaks data
+boxplot(breaks ~ tension, 
+        data = warpbreaks,
+        main = "Breaks by Tension", 
+        col = heat.colors(3))
+
+# Boxplot of chickwts data
+boxplot(weight ~ feed, 
+        data = chickwts,
+        main = "Chick Weight by Feed",
+        col = topo.colors(6), 
+        las = 2)
+```
+
+## Activities
+
+<div class="grswarn">
+Important Note: The DataCamp interface generates graphics in a *Plots* tab but because of the size of the interface those plots are "squished" and impossible to read. To generate a larger version of the graph for submission, click the double-headed arrow button along the bottom of the *Plots* tab to open the graph in a larger window and then copy/paste that larger image to the deliverable document for grading. If the graphic does not open in a larger window then temporarily pause the browser's pop-up blocker.
+</div>
+
+### Activity 1: Boxplot
+
+Using the *cafe* data frame, generate a boxplot for both *age* and *bill*. Copy/paste the boxplots in the deliverable document for this lab.
+
+```{r ex="act4.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act4.1", type="sample-code"}
+# Using the cafe data frame, generate a boxplot for both age and bill.
+```
+
+
+### Activity 2: Outliers
+
+Using the *cafe* data frame, find the outliers for *miles*. Record those outliers in the deliverable document for this lab.
+
+```{r ex="act4.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act4.2", type="sample-code"}
+# Using the cafe data frame, find the outliers for miles.
+```
+
+<!-- # Note: for my solution file, use this: boxplot.stats(miles)[[4]] -->
+
+
+### Activity 3: Grouped Boxplot
+
+Using the *cafe* data frame, generate a boxplot of *length* when grouped by *meal* to see if there is any difference in the length of the meal by the type of meal eaten (breakfast, lunch, dinner, other). Create a second boxplot of *tip* grouped by *sex* to see if there is any difference in the amount of tip left when grouped by sex. Copy/paste the boxplots in the deliverable document for this lab.
+
+```{r ex="act4.3", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act4.3", type="sample-code"}
+# Using the cafe data frame, generate a boxplot of length when grouped by meal
+
+
+# Using the cafe data frame, generate a boxplot of tip grouped by sex
+```
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 4," like "George Self Lab 4" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

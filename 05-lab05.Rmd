@@ -1,0 +1,261 @@
+# (PART) Counting {-}
+
+# Frequency Tables {#lab5}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%",
+  message=FALSE,
+  warnings=FALSE
+)
+
+```
+
+```{r, include=FALSE}
+library(tutorial)
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+
+Categorical data items are normally reported in frequency tables and crosstabs where the counts for a particular item are displayed. The only difference between these two types of tables is in the number of dimensions they display, frequency tables display only a single variable while a crosstab displays two variables. Both of these types of tables are commonly used to display polling data during the run-up to an election and would list things like the number of voters who would support some proposition (frequency table) or that same data broken out by party affiliation, sex, age, or some other category (crosstab). This lab explores both types of table.
+
+## Frequency Tables
+
+A frequency table is a one-dimensional table that lists a count of the number of times that some categorical data item appears in a vector. As an example, consider the following table which lists the
+number of cars for each number of cylinders in the *mtcars* data frame.
+
+```{r tut=FALSE}
+table(mtcars$cyl)
+```
+
+This table shows that 14 cars in the data frame had 8 cylinders. Occasionally, researchers prefer to present percentages rather than raw numbers, like this for the cylinder data.
+
+```{r tut=FALSE}
+round(prop.table(table(mtcars$cyl))*100,2)
+```
+
+Thus, about 44% of the cars have eight cylinders.
+
+Frequency tables are only useful for categorical data-type items. To illustrate why this is true, imagine creating a survey for all of the students at the University of Arizona and including "age" (continuous-type data) as one of the survey questions. Attempting to create a frequency table for the ages of the respondents would have, potentially, more than 65 columns since student ages would range from about 15 to more than 80 and each column would report the number of students for that particular age. While R could create a frequency table that large it would have so many columns that it would be virtually unusable. Normally, if continuous-type data need to be displayed in a table the data are grouped in some way, like ages 15-19, 20-24, etc, so there would be a manageable number of group counts to display.
+
+As a second example, here are two frequency tables that list the number and percentage of states per region (from the *state.region* data frame).
+
+```{r tut=FALSE}
+table(state.region)
+
+prop.table(table(state.region))
+```
+
+The following script illustrates a frequency table with two different options.
+
+* Line 4: Create a simple frequency table listing the number of cars by the forward gears.
+* Line 7: Create the same frequency table as Line 4 but add the total number of cars using the `addmargins` function.
+* Line 10: Create the same frequency table as Line 4 but use a `prop.table` (proporitions) instead of counts. Appending "*100" to the end of this command multiplies the percents by 100 so they are easier for most people to understand (display "46.875" instead of "0.46875").
+
+```{r tut=TRUE}
+attach(mtcars)
+
+# Count of cars by gears
+table(gear)
+
+# Count of cars with total
+addmargins(table(gear))
+
+# Percentage of cars by gears
+prop.table(table(gear)) * 100
+
+detach(mtcars)
+```
+
+## Crosstabs
+
+A crosstab (sometimes called a contingency table or pivot table), is a table of frequencies used to display the relationship between two nominal or ordinal variables. As an example of a crosstab, consider a table listing *mtcars* by the number of forward gears and the number of cylinders.
+
+
+```{r tut=FALSE}
+xtabs(~gear+cyl, data=mtcars)
+
+```
+
+In this case, one car had a four cylinder engine and three forward gears while 12 cars had eight cylinders and three forward gears. By using a crosstab, a researcher can determine the frequency of some incident (number of cars) by two different criteria (gears and cylinders).
+
+Here is a second example from the *esoph* data frame.
+
+```{r tut=FALSE}
+xtabs(~agegp+ncases, data=esoph)
+
+```
+
+Notice that there were few cases of esophageal cancer among people under the age of 45 but the number of cases increased between the ages of 45 and 74, with a peak in the 55-64 age group.
+
+The following script demonstrates how to create crosstabs.
+
+* Line 4: The `xtabs` command (for "Cross Tabs") creates a crosstab for the variables entered. It is important to notice the tilde character in this function. In many R commands the tilde is used to separate two parts of a formula. The first part are the data values to be acted upon and the second part are the categories used to group the values. In Line 7, there are no data values specified so R will simply count the number of times the various groups after the tilde show up. For example, "gear 3" and "cylinder 8" appear together 12 times in the data frame.
+* Line 7: This is just another example of the `xtabs` command.
+* Line 10: In this example, the *disp* variable comes before the tilde, so that variable contains the values to be acted upon. Since *cyl* is after the tilde, R will sum all displacements per number of cylinders, that is, *cyl* is the grouping variable. Thus, it will find the total displacement for cars with four cylinders, six cylinders, and eight cylinders. Frankly, this is of limited value. For example, R reports a total displacement of 1156.5 cubic inches for four cylinder cars but without knowing how many cars are in that category the number is meaningless.
+
+```{r}
+attach(mtcars)
+
+# Count of gears and cylinders
+xtabs(~gear+cyl)
+
+# Count of carbs and cylinders
+xtabs(~carb+cyl)
+
+# Sum of displacement per cylinder
+xtabs(disp~cyl)
+
+detach(mtcars)
+```
+
+## Multi-Dimensional Crosstabs
+
+Crosstabs can contain more than two dimensions. As an example, consider an experiment with pea plants where the amount of nitrogen, phosphorus, and potassium was varied to see what would happen to the crop yield. The *npk* data frame contains the result of that experiment and this crosstab displays that result in a multidimensional table.
+
+```{r tut=FALSE}
+xtabs(~N+P+K, data=npk)
+
+```
+
+When nitrogen (N) is 0, phosphorus (P) is 0, and potassium (K) is 0 the crop yield is 154.3 pounds/plot.
+
+As a second example, consider the *mtcars* data frame. A researcher wanted to know if there is any relationship between the number of forward gears, the number of cylinders in the engine (that is, the size of the engine), and whether the car had a manual or automatic transmission. Here is the crosstab that was created.
+
+```{r tut=FALSE}
+xtabs(~cyl+gear+am, data=mtcars)
+
+```
+
+When *am* is 0 (which is the code for an automatic transmission) there were no cars with five forward gears and when *am* is 1 (manual transmission) there were no cars with three forward gears.
+
+The following script demonstrates how to create multi-dimensional crosstabs.
+
+* Line 4: The `xtabs` command (for "Cross Tabs") creates a crosstab for the variables entered. In this case, there is nothing on the left side of the tilde so R will return a count of the various categories. Since there are three grouping variables, *gear*, *cyl*, and *am* R will count instances for all three variables. For example, "gear 4" and "cylinder 4" appear together 2 times when the transmission is 0 and 6 times when the transmission is 1. 
+* Line 7: This is just another example of multi-dimensional crosstab.
+
+```{r}
+attach(mtcars)
+
+# Count of gears and cylinders by transmission
+xtabs(~gear+cyl+am)
+
+# Count of carbs and cylinders by engine type
+xtabs(~carb+cyl+vs)
+
+detach(mtcars)
+```
+
+## Calculated Crosstabs {#lab5calculatedcrosstabs}
+
+Each of the crosstabs presented so far have displayed only counts of data; however, by using the `aggregate` function, crosstabs can also display calculated values, like the mean temperature for each summer month in the *airquality* data frame.
+
+```{r tut=FALSE, include=FALSE}
+#rm(mean) # I must have defined a variable named "mean" somewhere and that fouled up this function so I'm removing it here.
+```
+
+```{r agg02, tut=FALSE}
+round(aggregate(Temp ~ Month, 
+                data = airquality, 
+                FUN = mean),2)
+```
+
+Though the above table has a number of calculated values the R command is only one line long.
+
+As another example, the mean horsepower for automobiles can be calculated by the number of forward gears and engine cylinders from the *mtcars* data frame.
+
+```{r agg01, tut=FALSE}
+round(aggregate(hp ~ gear + cyl, 
+          data = mtcars, 
+          FUN = mean),2)
+```
+
+The following script demonstrates how to create calculated crosstab.
+
+* Line 4: This line uses the `aggregate` command to calculate the mean displacement for each category of cylinders. Notice that this command starts with the tilde format where displacement will be aggregated for each category of cylinders, followed by the name of the dataset used (even if the dataset has been attached), and the statistical analysis to calculate. This aggregate function determines that four cylinder cars have a mean displacement of just over 105 cubic inches.
+* Line 7: This line also calculates the mean displacement but groups the result by both number of cylinders and number of forward gears, creating a multi-dimensional crosstab. It calculates the mean displacement for four cylinder cars with three forward gears is just over 120 cubic inches.
+
+```{r}
+attach(mtcars)
+
+# Mean of displacement by cylinders
+aggregate(disp~cyl, mtcars, mean)
+
+# Mean of displacement by cyl and gears
+aggregate(disp~cyl+gear, mtcars, mean)
+
+detach(mtcars)
+```
+
+Crosstabs and frequency tables are important reporting tools for researchers to master and R makes them easy to produce.
+
+## Rounding ##
+
+R makes it easy for a researcher to round the results to whatever level is desired. It is important to note that even if the displayed value is rounded, R still uses the full decimal number for calculations. The R command to round a number is `round()` where the number to be rounded is listed first in the parenthesis and the number of decimal places is listed second. So `round(1.3498, 2)` would be rounded to 1.35 but `round(1.3498, 1)` would be rounded to 1.3. The number to be rounded can be a calculated value rather than just a plain number. As an example, here is the same `aggregate` command used in the previous example, but with the results rounded to two decimal places. Notice how the `aggregate` command is the same, but it was wrapped in a `round` function to round off the calculations to two decimal places.
+
+```{r}
+attach(mtcars)
+
+# Mean of displacement by cylinders
+round(aggregate(disp~cyl, mtcars, mean),2)
+
+# Mean of displacement by cyl and gears
+round(aggregate(disp~cyl+gear, mtcars, mean),2)
+
+detach(mtcars)
+```
+
+
+## Activities
+
+### Activity 1: Frequency Tables
+
+Using the *cafe* data frame, generate frequency tables for both *sex* and *meal*. Copy/paste the tables in the deliverable document for this lab.
+
+```{r ex="act5.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act5.1", type="sample-code"}
+# Using the cafe data frame, generate frequency tables for both sex and meal.
+```
+
+
+### Activity 2: Multi-Dimensional Crosstab
+
+Using the *cafe* data frame, create a multi-dimensional crosstab of *food* and *svc* when grouped by *sex*. Copy/paste the table in the deliverable document for this lab.
+
+```{r ex="act5.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act5.2", type="sample-code"}
+# Using the cafe data frame, create a multi-dimensional crosstab of food and svc when grouped by sex.
+
+```
+
+### Activity 3: Calculated Crosstab
+
+Using the *cafe* data frame, create a crosstab of the mean *tip* when grouped by *food* and *svc* with the means rounded to two decimal places. Copy/paste the table in the deliverable document for this lab.
+
+```{r ex="act5.3", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act5.3", type="sample-code"}
+# Using the cafe data frame, create a crosstab of the mean tip when grouped by food and svc with the means rounded to two decimal places.
+
+```
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 5," like "George Self Lab 5" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

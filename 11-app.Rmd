@@ -1,0 +1,973 @@
+# (APPENDIX) Appendix {-} 
+
+# Data Used In These Labs {#app01_data_dic}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%",
+  message=FALSE,
+  warnings=FALSE
+)
+
+```
+
+```{r, include=FALSE}
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+There are a number of data frames used in the lab exercises in this book and this appendix lists basic information about those data frames.
+
+## airmiles
+
+**Passenger Miles on Commercial US Airlines, 1937-1960**. The revenue passenger miles flown by commercial airlines in the United States for each year from 1937 to 1960. This is a time series of length 24; annually, 1937-1960 (from the FAA Statistical Handbook of Aviation).
+
+## airquality
+
+**New York Air Quality Measurements**. Daily air quality measurements in New York, May to September 1973. This is a data frame with 154 observations on 6 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c("Ozone", 
+    "Solar.R", 
+    "Wind",
+    "Temp",
+    "Month",
+    "Day"
+  ),
+  Type = c(
+    "int",
+    "int",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Ozone (ppb)",
+    "Solar R (lang)",
+    "Wind (mpg)",
+    "Temperature (degrees F)",
+    "Month (1-12)",
+    "Day of month (1-31)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Air Quality") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## attenu
+
+**The Joyner-Boore Attenuation Data**. This data gives peak accelerations measured at various observation stations for 23 earthquakes in California. The data have been used by various workers to estimate the attenuating affect of distance on ground acceleration. This is a data frame with 182 observations on 5 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "event", 
+    "mag", 
+    "station",
+    "dist",
+    "accel"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "fac",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Event number",
+    "Moment magnitude",
+    "Station number (117 levels)",
+    "Station-hypocenter distance (km)",
+    "Peak acceleration"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Joyner-Boore Attenuation Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+
+## attitude
+
+**The Chatterjee-Price Attitude Data**. From a survey of the clerical employees of a large financial organization, the data are aggregated from the questionnaires of the approximately 35 employees for each of 30 (randomly selected) departments. The numbers give the percent proportion of favourable responses to seven questions in each department. This is a data frame with 30 observations on 7 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "ratings", 
+    "complaints", 
+    "privileges",
+    "learning",
+    "raises",
+    "critical",
+    "advance"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Overall rating",
+    "Handling of employee complaints",
+    "Does not allow special privileges",
+    "Opportunity to learn",
+    "Raises based on performance",
+    "Too critical",
+    "Advancement"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Chatterjee-Price Attitude Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## beaver
+
+**Body Temperature Series of Two Beavers**. Reynolds (1994) describes a small part of a study of the long-term temperature dynamics of beaver Castor canadensis in north-central Wisconsin. Body temperature was measured by telemetry every 10 minutes for four females, but data from a one period of less than a day for each of two animals is used there. There are two data frames: beaver1 has 114 rows and 4 columns on body temperature measurements at 10 minute intervals and beaver2 has 100 rows and 4 columns on body temperature measurements at 10 minute intervals.
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "day", 
+    "time", 
+    "temp",
+    "activ"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Day of observation (days since 1990)",
+    "Time of observation (0330 for 3:30 am)",
+    "Measured body temperature (Celsius)",
+    "Activity outside the retreat (0, 1)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Body Temperature Series of Two Beavers") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## cafe
+
+*This is simulated data that is regenerated for each class. The number of observations will vary from 300 to 600 per class*. Customers of the Main Street Cafe completed surveys over a one week period. This is a data frame with about between 300 and 600 observations on 13 variables:
+
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "sex", 
+    "age", 
+    "day",
+    "meal", 
+    "length",
+    "miles", 
+    "pref",
+    "ptysize", 
+    "food",
+    "svc",
+    "recmd",
+    "bill", 
+    "tip"
+  ),
+  Type = c(
+    "fac",
+    "int",
+    "fac",
+    "fac",
+    "int",
+    "int",
+    "fac",
+    "int",
+    "int",
+    "int",
+    "fac",
+    "numeric",
+    "int"
+  ),
+  Description = c(
+    "Sex (3 levels: male, female, other)", 
+    "Age", 
+    "Day (7 levels: Monday, Tuesday, etc.)",
+    "Meal (4 levels: breakfast, lunch, dinner, other)", 
+    "Length of meal (minutes)",
+    "Miles driven to cafe", 
+    "Seating preference (2 levels: booth, table)",
+    "Number of people in party", 
+    "Rating for food (ord levels: 1-5 'stars')",
+    "Rating for service (ord levels: 1-5 'stars')",
+    "Would recommend to a friend (2 levels: yes, no)",
+    "Bill (dollars and cents)",
+    "Amount of tip (whole dollars)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Cafe Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+
+## cars
+
+**Speed and Stopping Distances of Cars**. The data give the speed of cars and the distances taken to stop. Note that the data were recorded in the 1920s. This is a data frame with 50 observations on 2 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "speed", 
+    "dist"
+  ),
+  Type = c(
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Speed (mpg)",
+    "Stopping distance (ft)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Speed and Stopping Distances") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## chickwts
+
+**Chicken Weights by Feed Type**. An experiment was conducted to measure and compare the effectiveness of various feed supplements on the growth rate of chickens. This is a data frame with 71 observations on 2 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "weight", 
+    "feed"
+  ),
+  Type = c(
+    "numeric",
+    "fac"
+  ),
+  Description = c(
+    "Weight (unk units)",
+    "Feed type"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Chicken Weights") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## CO2
+
+**Carbon Dioxide Uptake in Grass Plants**. This data set is from an experiment on the cold tolerance of the grass species *Echinochloa crusgalli*. This is a data frame with 84 observations on 5 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "Plant", 
+    "Type", 
+    "Treatment",
+    "conc", 
+    "uptake"
+  ),
+  Type = c(
+    "ordered",
+    "fac",
+    "fac",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Unique identifier of each plant (12 levels)", 
+    "Origin of the plant (Quebec, Mississippi)", 
+    "Type of treatment (nonchilled, chilled)",
+    "Ambient CO2 concentratino (mL/L)", 
+    "CO2 uptake rate (umol/sq meter/sec)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Carbon Dioxide Uptake in Grass Plants") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+
+## esoph
+
+**Smoking, Alcohol and (O)esophageal Cancer** . Data from a case-control study of (o)esophageal cancer in Ille-et-Vilaine, France. This is a data frame with 88 observations on 5 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "agegp", 
+    "alcgp", 
+    "tobgp",
+    "ncases", 
+    "ncontrols"
+  ),
+  Type = c(
+    "ordered",
+    "ordered",
+    "ordered",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Age group (6 levels)", 
+    "Alcohol consumption (4 levels)", 
+    "Tobacco consumption (4 levels)",
+    "Number of cases", 
+    "Number of controls"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Smoking, Alcohol and (O)esophageal Cancer") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## faithful
+
+**Old Faithful Geyser Data**. Waiting time between eruptions and the duration of the eruption for the Old Faithful geyser in Yellowstone National Park, Wyoming, USA. This is a data frame with 272 observations on 2 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "eruptions", 
+    "waiting"
+  ),
+  Type = c(
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Eruption time (minutes)",
+    "Waiting time to next eruption (minutes)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Old Faithful Geyser Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## iris
+
+**Edgar Anderson’s Iris Data**. This famous (Fisher’s or Anderson’s) iris data set gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris: Iris setosa, versicolor, and virginica. This is a data frame with 150 observations on 5 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "Sepal.Length", 
+    "Sepal.Width", 
+    "Petal.Length",
+    "Petal.Width", 
+    "Species"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "factor"
+  ),
+  Description = c(
+    "Length (cm)", 
+    "Width (cm)", 
+    "Length (cm)",
+    "Width (cm)", 
+    "Species (3 levels)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## LakeHuron
+
+**Level of Lake Huron 1875-1972**. Annual measurements of the level, in feet, of Lake Huron 1875-1972. This is a time series of length 98.
+
+## ldeaths
+
+**Monthly Deaths from Lung Diseases in the UK**. Monthly deaths recorded from bronchitis, emphysema and asthma in the UK. This is a time series of length 72, 1974-1979.
+
+## longley
+
+**Longley’s Economic Regression Data**. This data set is a macroeconomic data set which provides a well-known example for a highly collinear regression. This is a data frame with 7 variables observed annually from 1947 to 1962 (n = 16):
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "GNP.deflator", 
+    "GNP", 
+    "Unemployed",
+    "Armed.Forces", 
+    "Population",
+    "Year", 
+    "Employed"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "GNP implicit price deflator (1954=100)", 
+    "Gross National Product", 
+    "Number employed",
+    "Number in armed forces", 
+    "Population > 14 years of age",
+    "Year", 
+    "Number employed"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Longley’s Economic Regression Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## lynx
+
+**Annual numbers of lynx trappings for 1821–1934 in Canada**. This is a time series of length 114, 1821-1934.
+
+## morley
+
+**Michelson Speed of Light Data**. A classical data of Michelson (but not this one with Morley) on measurements done in 1879 on the speed of light. The data consists of five experiments, each consisting of 20 consecutive "runs". The response is the speed of light measurement, suitably coded (km/sec, with 299,000 subtracted). This is a data frame with 100 observations on 3 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "Expt", 
+    "Run", 
+    "Speed"
+  ),
+  Type = c(
+    "int",
+    "int",
+    "int"
+  ),
+  Description = c(
+    "The experiment number, from 1 to 5", 
+    "The run number within each experiment", 
+    "Speed-of-light measurement"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Speed of Light") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## mtcars
+
+**Motor Trend Car Road Tests**. The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-74 models). This is a data frame with 32 observations on 11 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "mpg", 
+    "cyl", 
+    "disp",
+    "hp", 
+    "drat",
+    "wt", 
+    "qsec",
+    "vs", 
+    "am",
+    "gear",
+    "carb"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Miles/(US) gallon", 
+    "Number of cylinders", 
+    "Displacement (cu. in.)",
+    "Gross horsepower", 
+    "Rear axle ratio",
+    "Weight (1000 lbs)",
+    "Quarter-mile time",
+    "V8 (0) or straight (1) engine", 
+    "Automatic (0) or manual (1) transmission",
+    "Number of forward gears",
+    "Number of carburetors"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Motor Trend Car Road Tests") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## npk
+
+**Classical N, P, K Factorial Experiment**. A classical N, P, K (nitrogen, phosphate, potassium) factorial experiment on the growth of peas conducted on 6 blocks. Each half of a fractional factorial design confounding the NPK interaction was used on 3 of the plots. This is a data frame with 24 observations on 5 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "block", 
+    "N", 
+    "P",
+    "K", 
+    "yield"
+  ),
+  Type = c(
+    "factor",
+    "factor",
+    "factor",
+    "factor",
+    "numeric"
+  ),
+  Description = c(
+    "Which block (6 levels)", 
+    "Indicator for nitrogen (No, Yes)", 
+    "Indicator for phosphate (No, Yes)",
+    "Indicator for potassium (No, Yes)", 
+    "Yield of peas (pounds/plot)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "N, P, K Experiment") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+
+## PlantGrowth
+
+**Results from an Experiment on Plant Growth**. Results from an experiment to compare yields (as measured by dried weight of plants) obtained under a control and two different treatment conditions. This is a data frame with 30 observations on 2 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "weight", 
+    "group" 
+  ),
+  Type = c(
+    "numeric",
+    "factor"
+  ),
+  Description = c(
+    "Weight of yield (in)", 
+    "Treatment group (3 levels)" 
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Plant Growth") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+
+## presidents
+
+**Quarterly Approval Ratings of US Presidents**. The (approximate) quarterly approval rating for the President of the United States from the first quarter of 1945 to the last quarter of 1974. This is a time series of length 120.
+
+## rivers
+
+**Lengths of Major North American Rivers**. This data set gives the lengths (in miles) of 141 "major" rivers in North America, as compiled by the US Geological Survey. This is a vector with 141 observations.
+
+## rock
+
+**Measurements on Petroleum Rock Samples**. This data set contains measurements on 48 rock samples from a petroleum reservoir. This is a data frame with 48 observations on 4 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "area", 
+    "peri",
+    "shape",
+    "perm"
+  ),
+  Type = c(
+    "int",
+    "numeric",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Area of pores (pixels in 256 X 256)", 
+    "Perimeter in pixels",
+    "perimeter/square root of area",
+    "Permeability in mili-Darcies"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Petroleum Rock Samples") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+
+## sleep
+
+**Student’s Sleep Data**. Data which show the effect of two soporific drugs (increase in hours of sleep compared to control) on 10 patients. This is a data frame with 20 observations on 3 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "extra", 
+    "group",
+    "ID"
+  ),
+  Type = c(
+    "numeric",
+    "fac",
+    "fac"
+  ),
+  Description = c(
+    "Increase in hours of sleep",
+    "Drug given (2 levels)",
+    "Patient ID (10 levels)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Sleep Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## state.region
+
+**US State Facts and Figures**. Data sets related to the 50 states of the United States of America. This is a factor giving the state region (Northeast, South, North Central, West).
+
+## sunspots
+
+**Monthly Sunspot Numbers, 1749-1983**. Monthly mean sunspot numbers from 1749 to 1983. Collected at Swiss Federal Observatory, Zurich until 1960, then Tokyo Astronomical Observatory. This is a time series of length 2820.
+
+## swiss
+
+**Swiss Fertility and Socioeconomic Indicators (1888) Data**. Standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888. This is a data frame with 47 observations on 6 variables, each of which is in percent (0-100):
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "Fertility", 
+    "Agriculture", 
+    "Examination",
+    "Education", 
+    "Catholic",
+    "Infant.Mortality"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "int",
+    "int",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Common fertility measure", 
+    "% males involved in agriculture", 
+    "% receiving high mark on army exam",
+    "% education beyond primary school", 
+    "% catholic (as opposed to protestant)",
+    "Live births who live less than 1 year"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Swiss Socioeconomic Indicators (1888)") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## Titanic
+
+**Survival of passengers on the Titanic**. This data set provides information on the fate of passengers on the fatal maiden voyage of the ocean liner "Titanic," summarized according to economic status (class), sex, age and survival. This is a 4-dimensional array resulting from cross-tabulating 2201 observations on 4 variables. The variables and their levels are as follows:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Num = c(
+    "1", 
+    "2", 
+    "3",
+    "4"
+  ),
+  Name = c(
+    "Class",
+    "Sex",
+    "Age",
+    "Survived"
+  ),
+  Levels = c(
+    "1st, 2nd, 3rd, Crew", 
+    "Male, Female", 
+    "Child, Adult",
+    "No, Yes"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Titanic") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## trees
+
+**Girth, Height and Volume for Black Cherry Trees**. This data set provides measurements of the girth, height and volume of timber in 31 felled black cherry trees. Note that girth is the diameter of the tree (in inches) measured at 4 ft 6 in above the ground. This is a data frame with 31 observations on 3 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "Girth", 
+    "Height",
+    "Volume"
+  ),
+  Type = c(
+    "numeric",
+    "numeric",
+    "numeric"
+  ),
+  Description = c(
+    "Tree diameter (inches)",
+    "Tree height (feet)",
+    "Volume of timber (cubic ft)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Black Cherry Tree Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## UCB Admissions
+
+**Student Admissions at UC Berkeley**. Aggregate data on applicants to graduate school at Berkeley for the six largest departments in 1973 classified by admission and sex. This is a 3-dimensional array resulting from cross-tabulating 4526 observations on 3 variables. The variables and their levels are as follows:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Num = c(
+    "1", 
+    "2",
+    "3"
+  ),
+  Name = c(
+    "Admit",
+    "Gender",
+    "Dept"
+  ),
+  Levels = c(
+    "Admitted, Rejected",
+    "Male, Female",
+    "A, B, C, D, E, F"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Admissions at UC Berkeley") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+## USAccDeaths
+
+**Accidental Deaths in the US 1973-1978**. The monthly totals of accidental deaths in the USA. This is a time series of length 72. 
+
+## warpbreaks
+
+**The Number of Breaks in Yarn During Weaving**. This data set gives the number of warp breaks per loom, where a loom corresponds to a fixed length of yarn. This is a data frame with 54 observations on 3 variables:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Name = c(
+    "breaks", 
+    "wool",
+    "tension"
+  ),
+  Type = c(
+    "numeric",
+    "fac",
+    "fac"
+  ),
+  Description = c(
+    "Number of breaks",
+    "Type of wool (levels A, B)",
+    "Tension on wool (levels L, M, H)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Breaks in Yarn During Weaving") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center")
+  # column_spec(1, bold = T, border_right = T)
+```
+
+# Creative Commons License {#app02_cc_lic}
+
+## CC0 1.0 Universal
+
+CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER.
+
+### Statement of Purpose
+
+The laws of most jurisdictions throughout the world automatically confer exclusive Copyright and Related Rights (defined below) upon the creator and subsequent owner(s) (each and all, an "owner") of an original work of authorship and/or a database (each, a "Work").
+
+Certain owners wish to permanently relinquish those rights to a Work for the purpose of contributing to a commons of creative, cultural and scientific works ("Commons") that the public can reliably and without fear of later claims of infringement build upon, modify, incorporate in other works, reuse and redistribute as freely as possible in any form whatsoever and for any purposes, including without limitation commercial purposes. These owners may contribute to the Commons to promote the ideal of a free culture and the further production of creative, cultural and scientific works, or to gain reputation or greater distribution for their Work in part through the use and efforts of others.
+
+For these and/or other purposes and motivations, and without any expectation of additional consideration or compensation, the person associating CC0 with a Work (the "Affirmer"), to the extent that he or she is an owner of Copyright and Related Rights in the Work, voluntarily elects to apply CC0 to the Work and publicly distribute the Work under its terms, with knowledge of his or her Copyright and Related Rights in the Work and the meaning and intended legal effect of CC0 on those rights.
+
+1. __Copyright and Related Rights.__ A Work made available under CC0 may be protected by copyright and related or neighboring rights ("Copyright and Related Rights"). Copyright and Related Rights include, but are not limited to, the following:
+
+    i. the right to reproduce, adapt, distribute, perform, display, communicate, and translate a Work;
+
+    ii. moral rights retained by the original author(s) and/or performer(s);
+
+    iii. publicity and privacy rights pertaining to a person's image or likeness depicted in a Work;
+
+    iv. rights protecting against unfair competition in regards to a Work, subject to the limitations in paragraph 4(a), below;
+
+    v. rights protecting the extraction, dissemination, use and reuse of data in a Work;
+
+    vi. database rights (such as those arising under Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, and under any national implementation thereof, including any amended or successor version of such directive); and
+
+    vii. other similar, equivalent or corresponding rights throughout the world based on applicable law or treaty, and any national implementations thereof.
+
+2. __Waiver.__ To the greatest extent permitted by, but not in contravention of, applicable law, Affirmer hereby overtly, fully, permanently, irrevocably and unconditionally waives, abandons, and surrenders all of Affirmer's Copyright and Related Rights and associated claims and causes of action, whether now known or unknown (including existing as well as future claims and causes of action), in the Work (i) in all territories worldwide, (ii) for the maximum duration provided by applicable law or treaty (including future time extensions), (iii) in any current or future medium and for any number of copies, and (iv) for any purpose whatsoever, including without limitation commercial, advertising or promotional purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each member of the public at large and to the detriment of Affirmer's heirs and successors, fully intending that such Waiver shall not be subject to revocation, rescission, cancellation, termination, or any other legal or equitable action to disrupt the quiet enjoyment of the Work by the public as contemplated by Affirmer's express Statement of Purpose.
+
+3. __Public License Fallback.__ Should any part of the Waiver for any reason be judged legally invalid or ineffective under applicable law, then the Waiver shall be preserved to the maximum extent permitted taking into account Affirmer's express Statement of Purpose. In addition, to the extent the Waiver is so judged Affirmer hereby grants to each affected person a royalty-free, non transferable, non sublicensable, non exclusive, irrevocable and unconditional license to exercise Affirmer's Copyright and Related Rights in the Work (i) in all territories worldwide, (ii) for the maximum duration provided by applicable law or treaty (including future time extensions), (iii) in any current or future medium and for any number of copies, and (iv) for any purpose whatsoever, including without limitation commercial, advertising or promotional purposes (the "License"). The License shall be deemed effective as of the date CC0 was applied by Affirmer to the Work. Should any part of the License for any reason be judged legally invalid or ineffective under applicable law, such partial invalidity or ineffectiveness shall not invalidate the remainder of the License, and in such case Affirmer hereby affirms that he or she will not (i) exercise any of his or her remaining Copyright and Related Rights in the Work or (ii) assert any associated claims and causes of action with respect to the Work, in either case contrary to Affirmer's express Statement of Purpose.
+
+4. __Limitations and Disclaimers.__
+
+    a. No trademark or patent rights held by Affirmer are waived, abandoned, surrendered, licensed or otherwise affected by this document.
+
+    b. Affirmer offers the Work as-is and makes no representations or warranties of any kind concerning the Work, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
+
+    c. Affirmer disclaims responsibility for clearing rights of other persons that may apply to the Work or any use thereof, including without limitation any person's Copyright and Related Rights in the Work. Further, Affirmer disclaims responsibility for obtaining any necessary consents, permissions or other rights required for any use of the Work.
+
+    d. Affirmer understands and acknowledges that Creative Commons is not a party to this document and has no duty or obligation with respect to this CC0 or use of the Work.
+
+> Creative Commons may be contacted at creativecommons.org
+
+

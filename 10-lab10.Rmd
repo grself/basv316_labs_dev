@@ -1,0 +1,191 @@
+# Non-Parametric Hypothesis Testing {#lab10}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%", 
+  message=FALSE,
+  warnings=FALSE
+)
+
+```
+
+```{r, include=FALSE}
+library(tutorial)
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+
+Researchers often begin a project with a hypothesis and then gather data to see if the hypothesis supports an underlying theory in a process commonly called the “scientific method.” Categorical data gathered as part of the research project are analyzed using nonparametric techniques and two of the most commonly-used tests are described in this lab. (Note: the concept of "hypothesis"" is discussed in [Lab 9](#lab9hypothesis).)
+
+## Kruskal-Wallis H
+
+This test is used to determine if there are any significant differences in three or more groups of data that are not normally-distributed, often categorical. Imagine that a researcher wanted to determine if there was a difference in smoking habit by age group. The subjects were interviewed and divided into three smoking groups: “Heavy” (more than one pack per day), “Light” (one pack or less per day), and “Nonsmokers.” They were also divided into age groups: <20, 20-29, 30-39, 40-49, >49. The researcher would then use a Kruskal-Wallis H test to see if there was a significant difference in smoking habit by age group.
+
+The following one-line script generates a `Kruskal-Wallis H` from the *airquality* data frame. `kruskal.test` requires the two variables being compared to be input as a formula in the form of y ~ x, where y is the dependent variable (continuous data) and x is the independent variable (the groups used to divide the interval/ratio data). Also the data source is specified with a "data =" parameter.
+
+```{r}
+# Kruskal-Wallis H
+kruskal.test(Ozone ~ Month, data = airquality)
+```
+
+The `kruskal.test` function returns a lot of information, most of which is beyond the scope of this lab: 
+
+```
+> # Kruskal-Wallis H
+> kruskal.test(Ozone ~ Month, data = airquality)
+
+  Kruskal-Wallis rank sum test
+
+data: Ozone by Month
+Kruskal-Wallis chi-squared = 29.267, df = 4, p-value = 6.901e-06
+```
+
+While a `kruskal.test` function returns information that would be useful in a more thorough statistical analysis, this lab is only concerned with the p-value, 6.901e-06, which is found at the end of Line 6. Because this is less than 0.05 (5%) it would be considered a significant result. Thus, the null hypothesis would be rejected (that there was no difference in Ozone by Month). Notice that this test does not indicate which month had the greatest ozone reading or if all months had some sort of significant variance from the mean, just that there is a significant difference between the months.
+
+## Mann-Whitney U
+
+This test is used to determine if there are any significant differences in two groups of data that are not normally-distributed, often categorical. Imagine that a movie producer wanted to know if there was a difference in the way the audience in two different cities responded to a movie. The null hypothesis (H~0~) is “There is no difference in movie-goers’ opinions between these two cities.” The alternate hypothesis (H~a~) is “Movie-goers’ opinions are significantly different by city.” As the audience members left the theater they would be asked to rate the movie on a scale of one to five stars. The ratings for the two cities would be collected and then a Mann-Whitney test would be used to determine if the difference in ratings between the cities was significant.
+
+The following one-line script generates a `Mann-Whitney U` from the *CO2* data frame. In R, a
+Mann-Whitney U test is automatically executed by the `wilcox.test` function whenever the grouping variable has only two levels. `wilcox.test` requires the two variables being compared to be input as a formula in the form of y ~ x, where y is the dependent variable (continuous data that is not normally distributed) and x is the independent variable (the groups used to divide the data). Also the data source is specified with a "data =" parameter.
+
+```{r}
+# Mann-Whitney U
+wilcox.test(uptake ~ Treatment, data = CO2)
+```
+
+The `wilcox.test` function returns a lot of information, most of which is beyond the scope of this lab: 
+
+```
+> # Mann-Whitney U
+> wilcox.test(uptake ~ Treatment, data = CO2)
+Warning message: cannot compute exact p-value with ties
+
+	   Wilcoxon rank sum test with continuity correction
+
+data:  uptake by Treatment
+W = 1187.5, p-value = 0.006358
+alternative hypothesis: true location shift is not equal to 0
+
+```
+
+While a `wilcox.test` function returns information that would be useful in a more thorough statistical analysis, this lab is only concerned with the p-value, 0.006358, which is found at the end of Line 8. Because this is less than 0.05 (5%) it would be considered a significant result. There is also a warning printed in red font that starts on Line 3. That warning indicates that there are some repeated values, called “ties,” in the data. Because of those ties, the test did not report an exact p-value but, instead, one based on an approximation. The researcher would have to determine if an approximation is adequate, it usually is, and for this lab that warning can be ignored.
+
+## Activities
+
+### Activity 1: Kruskal-Wallis H
+
+Using the *cafe* data, conduct a Kruskal-Wallis H and report the p-value for the following variables. Note: in the document submitted for this lab, Activity 1 should have a simple listing, something like illustrated here. (Notes: these are not the correct answers to the listed tests. To indicate tiny values use scientific notation in a form like 1.6e-05 since that is easier to type.) Record the p-values in the deliverable document for this lab.
+
+1. 6.352e-09
+2. 0.0059
+3. 4.028e-06
+4. 0.3275
+
+Here are the variables to test:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Num = c("1",
+          "2",
+          "3",
+          "4"
+          ),
+  y = c(
+    "Tip",
+    "Bill",
+    "Party Size (ptysize)",
+    "Length"),
+  x = c(
+    "Meal",
+    "Day",
+    "Recommend (recmd)",
+    "Sex"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Kruskal-Wallis H Lab") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center") %>%
+  column_spec(1, bold = T, border_right = T)
+```
+
+```{r ex="act10.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act10.1", type="sample-code"}
+# Using the cafe data frame, conduct a Kruskal-Wallis H on the following variables.
+
+# Tip vs. Meal
+
+# Bill vs. Day
+
+# Party Size (ptysize) vs. Recommend (recmd)
+
+# Length vs. Sex
+
+```
+
+### Activity 2: Mann-Whitney U
+
+Using the *cafe* data, conduct a Mann-Whitney U and report the p-value for the following variables. Note: in the document submitted for this lab, Activity 2 should have a simple listing, something like illustrated here. (Notes: these are not the correct answers to the listed tests. To indicate tiny values use scientific notation in a form like 1.6e-05 since that is easier to type.) Record the p-values in the deliverable document for this lab.
+
+1. 6.352e-09
+2. 0.0059
+
+Here are the variables to test:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Num = c("1",
+          "2"
+          ),
+  y = c(
+    "Food",
+    "Service (svc)"
+  ),
+  x = c(
+    "Recommend (recmd)",
+    "Preference (pref)"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Mann-Whitney U Lab") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center") %>%
+  column_spec(1, bold = T, border_right = T)
+```
+
+```{r ex="act10.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act10.2", type="sample-code"}
+# Using the cafe data frame, conduct a Mann-Whitney U on the following variables.
+
+# Food vs. Recommend (recmd)
+
+# Service (svc) vs. Preference (pref)
+
+```
+
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 10," like "George Self Lab 10" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

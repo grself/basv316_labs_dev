@@ -1,0 +1,366 @@
+# Dispersion {#lab3}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%",
+  message=FALSE,
+  warnings=FALSE
+)
+```
+
+```{r, include=FALSE}
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+
+One way to describe a vector is to report its dispersion, or spread. For example, if a poll of 100 potential Chevrolet customers were asked which model they preferred, it would make a lot of difference to a local automobile seller if the responses were fairly evenly distributed among Impala, Camaro, Traverse, and Corvette compared to results where customers selected 90% Impala with the rest distributed among the others. How tightly survey results are grouped (or scattered) is called "dispersion" and this lab explores data dispersion and the methods used to calculate that value with R.
+
+## Measures of Data Dispersion
+
+### Range
+
+The maximum and minimum values are those at the extreme ends of a vector and the range is nothing more than the maximum minus the minimum values. For the 2016 version of the Scholastic Aptitude Test (SAT) the maximum score is 1600 and the minimum score is 400, so the range is 1600 - 400. Occasionally, the range is expressed as a single number, 1200 in the case of the SAT scores, but researchers normally want to know the actual endpoints rather than just the spread and those endpoints are what R reports for range.
+
+To find the range of a vector, use the `range` function as found in the R script below.
+
+* Line 2: Attach the trees data frame to make it easier to enter the range functions.
+* Lines 3-5: These are cat functions that display the ranges for three different variables in the *trees* data frame.
+* Line 6: This detaches the *trees* data frame since no further functions will be accessing it.
+* Lines 8-12: These lines are very similar to Lines 1-6 but use variables in the *rock* data frame.
+
+```{r}
+# Range for trees
+attach(trees)
+range(Girth)
+range(Height)
+range(Volume)
+detach(trees)
+
+# Range for rock.
+attach(rock)
+range(area)
+range(perm)
+detach(rock)
+```
+
+### Quartiles
+
+A measure that is closely related to the median is the first and third quartile. The first quartile (Q1) is the score that splits the lowest 25% of the values from the rest and the third quartile (Q3) splits the highest 25% of the values from the rest. The second quartile (Q2) is the same as the median and, normally, the term "median" is used rather than Q2. For example, consider this vector: 5, 7, 10, 13, 17, 19, 23. The median of this vector is 13 because three values are smaller and three are larger. The first quartile is 7, which is the median for the lower half of the values (not including 13, the median of the entire vector); or the score that splits the lowest 25 % from the rest of the data. The third quartile is 19, which is the median for the upper half of the scores; or the score that splits the highest 25 % from the rest of the data.
+
+Occasionally, the word "hinges" appears in statistical literature. The two hinges for a vector are the medians for the lower half and the upper half of the data, but those halves also include the median for the entire vector. For the simple vector above, the lower hinge is the median of 5, 7, 10, and 13, or 8.5. The upper hinge is the median of 13, 17, 19, and 23, or 18. Quartiles and hinges usually have about the same accuracy but quartiles are more commonly used.
+
+R calculates and prints the quartiles, along with several other descriptive measures, using the `summary()` function. This is a very important function that returns a great deal of useful information and is a staple in a data scientest’s toolbox. To find the quartiles of a vector, use the `summary` function found in the R script below.
+
+* Line 2: Attach the *trees* data frame to make it easier to enter the `summary` functions.
+* Lines 3-5: Display summary information for three different variables in the *trees* data frame.
+* Line 6: Detach the *trees* data frame.
+* Lines 8-14: Display summary information for four different variables in the *rock* data frame.
+
+
+```{r}
+# Summary for trees
+attach(trees)
+summary(Girth)
+summary(Height)
+summary(Volume)
+detach(trees)
+
+# Summary for rock.
+attach(rock)
+summary(area)
+summary(peri)
+summary(shape)
+summary(perm)
+detach(rock)
+```
+
+
+### IQR (Inter-Quartile Range)
+
+Another measure of dispersion that is occasionally used is the Inter-Quartile Range (IQR); that is, the difference between Q1 and Q3. To The IQR function is find the IQR for a vector, use the IQR command: IQR(hp). R reports that the difference between Q1 and Q3 for the horsepower vector is 83.5. Since the IQR removes outliers it may sometimes provide a better indication of the data dispersion. To find the inter-quartile range of a vector, use the `IQR` function found in the R script below. *Note: `IQR` is one of the few functions in R that uses upper-case letters.*
+
+* Line 2: Attach the *trees* data frame to make it easier to enter the `IQR` functions.
+* Lines 3-5: Display inter-quartile range for three different variables in the *trees* data frame.
+* Line 6: Detach the *trees* data frame.
+* Lines 8-14: Display inter-quartile range for four different variables in the *rock* data frame.
+
+
+```{r}
+# Summary for trees
+attach(trees)
+IQR(Girth)
+IQR(Height)
+IQR(Volume)
+detach(trees)
+
+# Summary for rock.
+attach(rock)
+IQR(area)
+IQR(peri)
+IQR(shape)
+IQR(perm)
+detach(rock)
+```
+
+
+### Outliers {#lab3outliers}
+
+It is useful to consider data observations that are far outside the "normal" in any given vector. For example, imagine a neighborhood where the houses all cost about \$150,000. Suppose someone wins a lottery and decides to build a \$500,000 house in that same neighborhood. The value of that house would be an outlier in a vector that contains the house values in the neighborhood; that is, it would be outside the "average" house value. Outliers are important when discussing central measure since they tend to skew certain types of measures.
+
+Statistically, outliers are defined as values that lie outside boundaries that are 1.5 times the Inter-Quartile Range (IQR) below the first quartile or above the third quartile. As an example, consider the *trees$Volume* vector.
+
+```{r sumTrees, echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+cat("Summary:\n")
+summary(trees$Volume)
+cat("\nIQR: ", IQR(trees$Volume))
+
+```
+
+The first quartile is 19.40 and the IQR is 17.9. To calculate the lower boundary for outliers subtract Q1 - (1.5*IQR), which equals -7.45. Since it is not possible to have a negative tree volume, the lower boundary is assumed to be 0. 
+
+The third quartile is 37.30 and the IQR is 17.9. To calculate the upper boundary for outliers add Q3 + (1.5*IQR), which equals 64.15. 
+
+To determine the values that lie outside the boundaries, use the R 'sort' function to list all values in numeric order:
+
+```{r sortTrees, echo=TRUE, message=FALSE, warnings=FALSE, tut=FALSE}
+sort(trees$Volume)
+```
+
+No values are less than than the lower boundary of 0 and only one value, 77, is greater than the upper boundary of 64.15 so that would be the only outlier.
+
+The following script creates an R function to calculate the lower and upper boundaries.
+
+* Line 2: Attach the *trees* data frame for this exercise.
+* line 6: In statistics, quantiles are cutoff points that divide a vector into parts. One of the most commonly-used divisions is to split the vector into four parts, commonly called "quartiles" (as in the summary function). Line 6 is used to find the cutoff point for the 25th percentile and that value is then stored in a variable named Q1 (for "Quartile 1").
+* Line 8: The value of 1.5 times the IQR for *Volume* is calculated and stored in a variable named *Fac* (for "Factor").
+* Line 10: The lower boundary is calculated by subtracting *Fac* from Q1 and storing the result in *LowerBoundary*.
+* Lines 12-16: These lines determine the upper boundary using the same technique as for the lower boundary.
+* Lines 19-20: These lines print the calculated outlier boundaries.
+* Line 21: A `print()` function is used since it creates a better formatted screen display for the long *Volume* listing. Also note that the vector is sorted so outlier values would be easier to spot at the start and end of the list of values.
+
+
+```{r}
+# Calculate Outlier Boundaries
+attach(trees)
+
+# Calculate the low boundary
+# Find the first quartile
+Q1 <- quantile(Volume,0.25)
+# Find 1.5 X IQR
+Fac <- (1.5 * IQR(Volume))
+# Calc lower boundary
+LowerBoundary <- (Q1 - Fac)
+
+# Calculate the high boundary
+# Find the third quartile
+Q3 <- quantile(Volume,0.75)
+# Calc high boundary
+UpperBoundary <- (Q3 + Fac)
+
+# Look at the sorted vector
+print(LowerBoundary)
+print(UpperBoundary)
+print(sort(Volume))
+
+detach(trees)
+```
+
+*Note: [Lab 4](#lab4) demonstrates a graphical method to determine if a vector contains outliers. Using the graphical method will make it simple to determine if a vector has outliers and then the above script can identify those outlying values.*
+
+### Standard Deviation
+
+The standard deviation of a vector is a number that indicates how much variation there are in the data; or how "scattered" the data are from the mean. In general, the larger the standard deviation then the more variation there is in the data. A vector with a small standard deviation would create a sharply peaked normal distribution curve while a large standard deviation would create a flatter curve. 
+
+Once a standard deviation is calculated, then about 68.2% of the samples will lie closer to the mean than that number. To put it another way, one standard deviation explains about 68.2% of the variance from the mean. To show this concept graphically, consider the three following graphs of IQ scores.
+
+```{r stdevPlot, echo=FALSE, message=FALSE, warnings=FALSE, results='asis', tut=FALSE}
+# Display three different plots that illustrate the first three standard deviations on IQ data
+par(mfrow=c(2,2))
+
+#############################
+# One standard deviation
+mn=100; std=15
+lb=100-std; ub=100+std
+
+x <- seq(-4,4,length=100)*std + mn
+hx <- dnorm(x,mn,std)
+
+plot(x, hx, 
+     type="n", 
+     xlab="IQ Values", 
+     ylab="",
+     main="1 St Dev", 
+     axes=FALSE)
+
+i <- x >= lb & x <= ub
+lines(x, hx)
+polygon(c(lb,x[i],ub), c(0,hx[i],0), col="red") 
+
+area <- pnorm(ub, mn, std) - pnorm(lb, mn, std)
+#result <- paste("P(",lb,"< IQ <",ub,") =",
+#                signif(area, digits=3))
+#mtext(result,3)
+axis(1, at=seq(40, 170, 40), pos=0)
+
+#############################
+# Two standard deviations
+mn=100; std=15
+lb=100-(std*2); ub=100+(std*2)
+
+x <- seq(-4,4,length=100)*std + mn
+hx <- dnorm(x,mn,std)
+
+plot(x, hx, type="n", 
+     xlab="IQ Values", 
+     ylab="",
+     main="2 St Dev", 
+     axes=FALSE)
+
+i <- x >= lb & x <= ub
+lines(x, hx)
+polygon(c(lb,x[i],ub), c(0,hx[i],0), col="blue") 
+
+area <- pnorm(ub, mn, std) - pnorm(lb, mn, std)
+# result <- paste("P(",lb,"< IQ <",ub,") =",
+#                 signif(area, digits=3))
+# mtext(result,3)
+axis(1, at=seq(40, 160, 40), pos=0)
+
+#############################
+# Three standard deviations
+mn=100; std=15
+lb=100-(std*3); ub=100+(std*3)
+
+x <- seq(-4,4,length=100)*std + mn
+hx <- dnorm(x,mn,std)
+
+plot(x, hx, 
+     type="n", 
+     xlab="IQ Values", 
+     ylab="",
+     main="3 St Dev", 
+     axes=FALSE)
+
+i <- x >= lb & x <= ub
+lines(x, hx)
+polygon(c(lb,x[i],ub), c(0,hx[i],0), col="green") 
+
+area <- pnorm(ub, mn, std) - pnorm(lb, mn, std)
+# result <- paste("P(",lb,"< IQ <",ub,") =",
+#                 signif(area, digits=3))
+# mtext(result,3)
+axis(1, at=seq(40, 160, 40), pos=0)
+
+```
+
+
+The mean of an IQ distribution is 100 and one standard deviation is 15. The shaded area under the first curve, in red, includes about 68.2% of all IQ scores. In the same way, two standard deviations from the mean would include about 95.4% of the data points and is illustrated in blue in the second image; and three standard deviations would include more than 99.7% of the data points and is illustrated in green in the third image.
+
+As one last example, imagine several classes with a total of 500 students where the professors administered an examination worth 100 points. If the mean score for that examination was 80 and the standard deviation was 5, then the professors would know that the scores were fairly tightly grouped (341 scores of the 500 (68.2%) were between 75-85, within 5 points of the mean), and this would probably be good news. On the other hand, if the mean score was 60 and the standard deviation was 15, then the scores were "all over the place" (more precisely, 341 scores of the 500 were between 45-75), and that may mean that the professors would have to re-think how the lesson was taught or maybe that the examination itself was flawed.
+
+It is difficult to categorically state whether a specific standard deviation is good or bad; it is simply a measure of how concentrated the data are around the mean. For something like a manufacturing process where the required tolerance for the parts being produced is tight then the standard deviation for the weights of random samples pulled off of the line must be very small; that is, the parts must be as nearly identical as possible. However, in another context, the standard deviation may be quite large. Imagine measuring the time it takes a group of high school students to run 100 yards. Some would be very fast but others would be much slower and the standard deviation for that data would likely be large.
+
+To find the standard deviation of a vector, use the "sd" function as found in the R script below.
+
+* Line 2: Attach the *trees* data frame to make it easier to enter the sd functions.
+* Lines 3-5: Display standard deviation for three different variables in the *trees* data frame.
+* Line 6: Detach the *trees* data frame.
+* Lines 8-14: Display standard deviation for four different variables in the *rock* data frame.
+
+
+```{r}
+# Summary for trees
+attach(trees)
+sd(Girth)
+sd(Height)
+sd(Volume)
+detach(trees)
+
+# Summary for rock.
+attach(rock)
+sd(area)
+sd(peri)
+sd(shape)
+sd(perm)
+detach(rock)
+```
+
+In the results, notice that the tree girth has a standard deviation of about 3.14 inches while the range was 8.3-20.6 inches (the range function is found in Section 3.1.1). While that range is fairly large, the standard deviation indicates that the girths of most of the trees were within about 6 inches of each other, so the trees were all about the same size. This is an example of how the standard deviation can provide information to help interpret the range.
+
+## Activities
+
+### Activity 1: Range
+
+Using the *cafe* data frame, find the range for both *age* and *bill*. Include the answers to these problems in the deliverable document for this lab.
+
+```{r ex="act3.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act3.1", type="sample-code"}
+# Using the cafe data frame, find the range for both age and bill.
+```
+
+
+### Activity 2: Quartiles Using Summary
+
+Using the *cafe* data frame, find the summary for both *age* and *bill*. Include the values for Q1 and Q3 for both variables in the deliverable document for this lab.
+
+```{r ex="act3.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act3.2", type="sample-code"}
+# Using the cafe data frame, find the summary for bill.
+```
+
+### Activity 3: Inter-Quartile Range (IQR)
+
+Using the *cafe* data frame, find the inter-quartile-range (IQR) for both *age* and *bill*. Include the answers to these problems in the deliverable document for this lab.
+
+```{r ex="act3.3", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act3.3", type="sample-code"}
+# Using the cafe data frame, find the iner-quartile range (IQR) for both age and bill.
+```
+
+### Activity 4: Standard Deviation
+
+Using the *cafe* data frame, find the standard deviation for both *age* and *bill*. Include the answers to these problems in the deliverable document for this lab.
+
+```{r ex="act3.4", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act3.4", type="sample-code"}
+# Using the cafe data frame, find the standard deviation for both age and bill.
+```
+
+### Activity 5: Finding Outliers
+
+Using the *cafe* data frame, find the boundary values for both the lower and upper outliers for *bill*, *tip*, and *miles*. Then, using a sort, determine if there are any outlier values beyond the boundaries in these three vectors (note: there may be no outliers). Include the boundary values and the outliers (if they exist) for all three variables in the deliverable document for this lab. (Note: do not include the full sorted data, only the values of the outliers.)
+
+```{r ex="act3.5", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act3.5", type="sample-code"}
+# Using the cafe data frame, find the cutoff values for the lower and upper outliers for bill, tip, and miles. Then, determine if there are any values outside those cutoffs.
+
+
+```
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 3," like "George Self Lab 3" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

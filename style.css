@@ -1,0 +1,54 @@
+/* This is for the DataCamp blocks */
+p code {
+  white-space: inherit;
+}
+
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+
+pre code {
+  white-space: inherit;
+}
+
+.caption {
+  color: #777;
+  margin-top: 10px;
+}
+
+/* used for the div "note" boxes */
+.grsnote {
+padding: 1em 1em 1em 4em;
+  margin-bottom: 10px;
+  background: #ffff99; /* pale yellow */
+  font-weight: bold;
+  position:relative;
+}
+
+.grsnote:before {
+    content: "\f14b"; /* pencil */
+    font-family: FontAwesome;
+    left:10px;
+    position:absolute;
+    top:0;
+    font-size: 45px;
+}
+
+/* used for the div "note" boxes */
+.grswarn {
+padding: 1em 1em 1em 4em;
+  margin-bottom: 10px;
+  background: #ffcccc; /* pale red */
+  font-weight: bold;
+  position:relative;
+}
+
+.grswarn:before {
+    content: "\f06a"; /* exclaimation mark */
+    font-family: FontAwesome;
+    left:10px;
+    position:absolute;
+    top:0;
+    font-size: 45px;
+}

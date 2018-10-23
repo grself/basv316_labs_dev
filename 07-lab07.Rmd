@@ -1,0 +1,416 @@
+# (PART) Relationships {-}
+
+# Correlation and Regression {#lab7}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%", 
+  message=FALSE,
+  warnings=FALSE
+)
+
+```
+
+```{r, include=FALSE}
+library(tutorial)
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+
+Correlation is a method used to describe a relationship between the independent (or *x-axis*) and dependent (or *y-axis*) variables in some research project. For example, imagine a project involving corn production where researchers applied a treatment to 50 acres of corn but not to another 50 acres in a nearby field. At the end of the growing season they found that the untreated field yielded 150 bushels per acre while the treated field yielded 170 bushels per acre. This would indicate a correlation, or relationship, between the treatment applied and the crop yield.
+
+Regression analysis is a statistical method that uses correlation to find trends in data. With regression analysis, it is possible to predict the unknown value of the dependent variable based on a known value of the independent variable. For example, if a researcher recorded the 100 real estate sales in a small town along with the age of the houses being sold then it would be possible to use regression analysis to predict the selling price for a house when given its age. This lab explores both correlation and regression.
+
+## Correlation
+
+### Correlation and Causation
+
+From the outset of this lab, it is important to remember that correlation does not equal causation. If two factors are correlated, even if that correlation is quite high, it does not follow that one is causing the other. As an example, if a research project found that students who spend more hours studying tend to get higher grades this would be an interesting correlation. However, that research, by itself, could not prove that longer studying hours causes higher grades. There would be other intervening factors that are not accounted for in this simple correlation (like the type of final examination used). As an egregious example of this point, consider that the mean age in the United States is rising (that is, people are living longer; thus, there are more elderly people) and that the crime of human trafficking is increasing. While these two facts may be correlated, it would not follow that old people are responsible for human trafficking! Instead, there are numerous social forces in play that are not accounted for in this simple correlation. It is important to keep in mind that correlation does not equal causation.
+
+### Continuous Data
+
+Pearson's Product-Moment Correlation Coefficient (normally called Pearson's *r*) is a measure of the strength of the relationship between two variables having continuous data that are normally distributed (they have bell-shaped curves). *(Note: [Lab 1](#lab1) contains information about various data types.)* Pearson's *r* is a number between -1.0 and +1.0, where 0.0 means there is no correlation between the two variables and either +1.0 or -1.0 means there is a perfect correlation. A positive correlation means that as one variable increases the other also increases. For example, as people age they tend to weigh more so a positive correlation would be expected between age and weight. A negative correlation, on the other hand, means that as one variable increases the other decreases. For example, as people age they tend to run slower so a negative correlation would be expected between age and running speed. In general, both the strength and direction of a correlation is indicated by the value of *r*:
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Correlation = c("+.70 or higher", 
+                  "+.40 to +.69", 
+                  "+.30 to +.39",
+                  "+.20 to +.29",
+                  "+.19 to -.19",
+                  "-.20 to -.29",
+                  "-.30 to -.39",
+                  "-.40 to -.69",
+                  "-.70 or less"
+                  ),
+  Description = c(
+    "Very strong positive",
+    "Strong positive",
+    "Moderate positive",
+    "Weak positive",
+    "No or negligible",
+    "Weak negative",
+    "Moderate negative",
+    "Strong negative",
+    "Very strong negative"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Correlation Descriptions") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center") %>%
+  column_spec(1, bold = T, border_right = T)
+```
+
+The following examples are from the *mtcars* dataset and all involve continuous data, so Pearson's *r* was used to calculate the correlations. 
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Variables = c("disp-mpg",
+                "wt-mpg",
+                "wt-qsec",
+                "disp-qsec",
+                "drat-qsec"
+                  ),
+  Correlation = c(
+    "-0.8476",
+    "-0.8677",
+    "-0.1747",
+    "-0.4337",
+    "+0.0912"
+  ),
+  Description = c(
+    "Very Strong Negative",
+    "Very Strong Negative",
+    "No Correlation",
+    "Strong Negative",
+    "No Correlation"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Correlations of Continuous Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center"
+                )
+
+```
+
+The following script demonstrates how to calculate Pearson's *r*.
+
+* Line 2: This is the start of the `cor.test` function, which calculates the correlation between two variables. That function requires the *x-axis* variable be listed first then the *y-axis* variable.
+* Line 3: This is a continuation of the `cor.test` function call and specifies the method to be Pearson's *r*. Since Pearson's *r* is the default method for the `cor.test` function this line did not need to be included but it is used in this example since the specification will be important in later examples in this lab.
+* Lines 5-6: This is a second example of using `cor.test` to find the p-value and correlation between two continuous variables.
+
+```{r}
+# Pearson's r
+cor.test(airquality$Wind, airquality$Ozone,
+  method = "pearson")
+
+cor.test(attitude$rating, attitude$complaints,
+  method = "pearson")
+```
+
+The `cor.test` function returns a lot of information that will be important later in this lab and in Labs 9-10. However, here is an explanation for the result of the first test (the second is similar).
+
+1. *Pearson's ...*: This is the title of the function being executed.
+1. *data: ...*: This lists the two variables being correlated.
+1. *t=...*: This line is the result of the calculation. The "t" score is used to calculate the p-value. The "df" are the "degrees of freedom" and is a measure of how many different levels the variables can take. The "p-value" is the probability value and, normally, a p-value less than 0.05 is considered significant. (Significance and p-value is discussed later in this lab.)
+1. *alternative...*: The alternative hypothesis being tested. The default is that the correlation is not equal to zero and this line simply states the alternative hypothesis so the researcher can compare that hypothesis with the correlation and p-value to see if the null hypothesis can be rejected. ("Hypothesis"" is discussed in [Lab 9](#lab9).)
+1. *95 percent...*: This shows the 95% confidence level for the true correlation. In this case, the true correlation should be between -0.706 and -0.471.
+1. *sample estimates*: This begins the "estimates" section of the report.
+1. *cor*: This verifies that the test executed was Pearson's *r* (Spearman's will report *rho* and Kendall's will report *tau*).
+1. *-0.6015465*: This is the calculated correlation between the two variables.
+
+### Categorical Data
+
+When the one or both data elements are categorical then Spearman's *rho* or Kendall's *tau* is used to calculate the correlation. Other than the process used, the concept is exactly the same as for Pearson's *r* and the result is a correlation between -1.0 and +1.0 where the strength and direction of the correlation is determined by its value. Spearman's *rho* is used when at least one variable is ordered data and typically involves larger data samples while Kendall's *tau* can be used for any type of categorical data but is more accurate for smaller data samples. *(Note: "ordered data"" have categories that imply some sort of order but the difference between the categories cannot be calculated. As an example, a movie rated three stars is somehow better than one rated two stars but the difference between the two cannot be arithmetically calculated.)*
+
+For example, imagine that a dataset included information about the age of people who purchased various makes of automobiles. If the "makes" are selected from a list (Ford, Chevrolet, Honda, etc.) then the data are categorical but no order is implied (that is, "Ford" is neither better or worse than "Chevrolet") so Kendall's *tau* would be used to calculate the correlation between the customers' preference for the make of an automobile and their ages. Perhaps the correlation would come out to +0.534 (this is a made-up number). This would indicate that there was a strong positive correlation between these two variables; that is, people tend to prefer a specific make based upon their age; or, to put it another way, as people age their preference for automobile make changes in a predictable way.
+
+The following examples are from the *mtcars* dataset and all involve ordered data, so Spearman's *rho* was used to calculate the correlations.
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Variables = c("cyl—gear",
+                "gear—am",
+                "cyl—carb",
+                "carb—gear",
+                "vs—carb"
+                  ),
+  Correlation = c(
+    "-0.5643",
+    "+0.8077",
+    "+0.5801",
+    "+0.1149",
+    "-0.6337"
+  ),
+  Description = c(
+    "Strong Negative",
+    "Very Strong Positive",
+    "Strong Positive",
+    "No Correlation",
+    "Strong Negative"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "Correlations of Categorical Data") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center"
+                )
+
+```
+
+#### Spearman's Rho
+
+The following script demonstrates using `cor.test` to calculate the correlations using Spearman's *rho*. The process for this calculation is the same as for Pearson's *r* except the method specified is "spearman". There is one other difference between this script and the first. Notice on line 2 that the x-axis variable, *esoph$agegp*, is inside an `as.numeric` function. Since the *agegp* variable actually uses phrases like "25-34" instead of a number it is necessary to convert that data to a number for Spearman's *rho* to analyze. (Note: This script will generate some warnings but they can be safely ignored for this lab.)
+
+```{r}
+# Spearman's rho
+cor.test(as.numeric(esoph$agegp), esoph$ncases,
+  method = "spearman")
+
+cor.test(as.numeric(esoph$tobgp), esoph$ncases,
+  method = "spearman")
+
+```
+
+The interpretation of the results of Spearman's *rho* is similar to that for Pearson's *r* and will not be further explained here.
+
+#### Kendall's Tau
+
+The following script demonstrates using `cor.test` to calculate the correlations using Kendall's *tau*. The process for this calculation is the same as for Pearson's *r* except the method specified is "kendall". As in the Spearman example, the first variable must be converted to numeric values. Also, this function will generate a warning but that can be ignored for this lab.
+
+```{r}
+# Kendall's tau
+cor.test(as.numeric(npk$N), npk$yield,
+  method = "kendall")
+
+cor.test(as.numeric(warpbreaks$tension), warpbreaks$breaks,
+  method = "kendall")
+
+```
+
+Interpreting Kendall's *tau* is similar to Pearson's *rho* and will not be further discussed here.
+
+Pearson's *r*, Spearman's *rho*, and Kendall's *tau* all calculate correlation and it is reasonable to wonder which method should be used in any given situation. Here is a quick chart to help:
+
+* Pearson's *r*: both data items being correlated are continuous.
+* Spearman's *rho*: at least one variable is ordered and larger sample size.
+* Kendall's *tau*: at least one variable is categorical (but not necessarily ordered) and smaller sample size.
+
+Imagine a survey with a series of Likert scale items where respondents are asked to select one of five responses ranging from "Strongly Agree" to "Strongly Disagree" for statements like "I enjoyed the movie." Likert scales are ordered data and to determine how well the responses to these questions correlate with something like the respondents' ages, Spearman's *rho* would be an appropriate.
+
+## Significance
+
+Most people use the word *significant* to mean *important* but researchers and statisticians have a much different meaning for the word significant and it is vital to keep that difference in mind.
+
+In statistics and research, significance means that the experimental results were such that they would not likely have been produced by mere chance. For example, if a coin is flipped 100 times, heads should come up 50 times. Of course, by pure chance, it would be possible for heads to come up 55 or even 60 times. However, if heads came up 100 times, researchers would suspect that something unusual was happening (and they would be right!). To a researcher, the central question of significance is "How many times can heads come up and still be considered just pure chance?"
+
+In general, researchers use one of three significance levels: 1%, 5%, or 10%. A researcher conducting The Great Coin-Tossing Experiment may start by simply stating "This result will be significant at the 5% level." That would mean that if the coin were tossed 100 times, then anything between 47.5-52.5 (a 5% spread) "heads" tosses would be considered merely chance. However, 47 or 53 "heads" would be outside that 5% spread and would be significant.
+
+It must seem somewhat subjective for a researcher to simply select the desired significance level, but an overwhelming number researchers in business and the social and behavioral sciences (like education, sociology, and psychology) tend to choose a significance level of 5%. There is no real reason for choosing a 5% level other than it is just the way things have traditionally been done for many years. Therefore, if a researcher selected something other than 5%, peer researchers would want some explanation concerning the "weird" significance level. Keep in mind, though, that statistical significance is not the same as practical significance. Wikipedia, that great repository of knowledge, includes this interesting example:
+
+>As used in statistics, significant does not mean important or meaningful, as it does in everyday speech. For example, a study that included tens of thousands of participants might be able to say with great confidence that residents of one city were more intelligent than people of another city by 1/20 of an IQ point. This result would be statistically significant, but the difference is small enough to be utterly unimportant.
+
+Note: the above statement was copied from Wikipedia in March, 2016; however, it has subsequently been removed from the article. Because it is still appropriate for this manual it was retained here. This was the original source of the quote: [http: //en.wikipedia.org/wiki/Statistical_significance](http: //en.wikipedia.org/wiki/Statistical_significance)
+
+The calculated significance is typically reported as a p-value (for "probability value"). The following table contains the correlation and p-value for several pairs of variables from the *mtcars* data frame. 
+
+```{r tut=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+cor_tbl <- data.frame(
+  Variables = c(
+    "cyl—vs",
+    "wt—disp",
+    "wt—qsec",
+    "hp—drat",
+    "am—hp"
+  ),
+  Correlation = c(
+    "-0.8108",
+    "+0.8880",
+    "-0.1747",
+    "-0.4488",
+    "-0.2432"
+  ),
+  Pvalue = c(
+    "1.843 x 10^-08^",
+    "1.222 x 10^-11^",
+    "0.3389",
+    "0.009989",
+    "0.1798"
+  )
+)
+
+kable(cor_tbl, 
+      "html",
+      caption = "P-Values for Selected Correlations") %>%
+  kable_styling(bootstrap_options = c("striped","hover","responsive"),
+                full_width = F,
+                position = "center"
+                )
+
+```
+
+If a 5% significance level were specified for this data then any p-value smaller than 0.05 is considered significant; that is, the observed relationship is not likely due to chance. Given that, there is no significance in the correlation between *wt—qsec* and between *am—hp* since the p-values for those correlations are greater than 0.05. However, the correlations between the other variables are significant since the p-values for those are smaller than 0.05.
+
+## Regression
+
+A regression line can be drawn on a scatter plot to graphically show the relationship between two variables (this is sometimes called a "trend line" and a "line of best fit"). Moreover, if the data points in the scatter plot are all close to the regression line, then it indicates a strong correlation.
+
+As an example, in the *mtcars* dataset the calculated Pearson's *r* for Quarter-mile Time and Horsepower is -0.708. These two variables have a strong negative correlation and are plotted below.
+
+```{r fig0701,fig.width=4,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE}
+plot(mtcars$hp, mtcars$qsec, 
+     type="p", 
+     main="Quarter-Mile Time \nby Horsepower", 
+     xlab="Horsepower", 
+     ylab="Time"
+     )
+# lm(y ~ x, data=d)
+lmod <- lm(qsec ~ hp, data = mtcars)
+abline(lmod,
+       col = "red",
+       lwd = 2
+       )
+```
+
+The linear regression line drawn in the above figure has a slope of -0.01846 and a y-intercept of 20.55635. Using this information and the slope intercept formula (see the following equation), the quarter-mile time (y value) for a specific horsepower (x value) can be predicted. For example, imagine that the quarter-mile time for a horsepower of 200 is required:
+
+$$
+\begin{aligned}
+y &= mx + b \\
+y &= (-0.01846 * 200) + 20.55635 \\
+y &= -3.692 + 20.55635 \\
+y &= 16.86435
+\end{aligned}
+$$
+
+In the equation, *m* is the slope of the regression line and *b* is the y-intercept. By plugging in the required value for *x* a simple calculation will determine the predicted value for *y*, which is 16.86 (rounded) in this example.
+
+Regression analysis becomes less certain if the supplied *x* value is at the edge or outside the main body of the scatter plot. For example, using the above figure, it is mathematically possible to predict the quarter-mile time (y value) for a horsepower of 50:
+
+$$
+\begin{aligned}
+y &= mx + b \\
+y &= (-0.01846 * 50) + 20.55635 \\
+y &= -0.923 + 20.55635 \\
+y &= 19.63
+\end{aligned}
+$$
+
+However, since the selected *x* value is outside the main body of the scatter plot then the calculated *y* value is suspect and should not be reported.
+
+The following script calculates a predicted value for *y* when given an *x* value. 
+
+* Line 3: The slope-intercept formula is noted in a comment on line 3.
+* Line 5: This line executes the `lm` function to generate a "linear model" (the line of best fit) for *horsepower* (x-axis) and *quarter-mile time* (y-axis) in the *mtcars* data frame. The result of this function is stored in a variable named *lmod*. It is important to ensure that the variables are entered in the correct order or the linear model will be backwards. The dependent variable (the y-axis) is listed first and then the independent variable (the x-axis). Thus, it is expected that the quarter-mile time is dependent on the horsepower of the car, not the other way around.
+* Lines 6-7: Each of these lines store one number in a variable for use in Line 13. There is an odd format used to extract each of these numbers. `lmod` contains a lot of information, including dozens of numbers, and Line 6 (the slope) accesses the `coef` section of `lmod` and extracts just the slope and then stores it in a variable named *b*. Line 7 accesses the `coef` section of `lmod` and extracts just the intercept and stores it in a variable named *m*.
+* Line 10: The value of interest is stored in *x* for use in Line 13. In this case, the quarter-mile time for a car with 200 horsepower is being predicted
+* Line 13: This is the slope-intercept formula written in R format. The formula is executed with the variables generated in Lines 6, 7, and 10 and the result is displayed on the screen. (Note, this result is slightly different from the one reported earlier in this lab due to rounding.)
+
+```{r}
+# Lab 07.04: Regression Analysis
+
+# Slope-intercept formula: y = mx + b
+# First, determine m and b
+lmod <- lm(mtcars$qsec ~ mtcars$hp)
+b <- coef(lmod)[[1]] # slope
+m <- coef(lmod)[[2]] # intercept
+
+# Now, specify the value of x
+x <- 200.0
+
+# Calculate the regression
+(m * x) + b
+
+```
+
+
+## Activities
+
+### Activity 1: Pearson's R
+
+Using the *cafe* data frame, determine the correlation between the *length* of the meal and the *bill* to see if longer meals tend to cost more. Because these are both ratio variables, use Pearson's *r* as the correlation method. Record the correlation and p-value in the deliverable document for this lab.
+
+```{r ex="act7.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act7.1", type="sample-code"}
+# Using the cafe data frame, determine the correlation between the length of the meal and the bill.
+
+```
+
+### Activity 2: Spearman's Rho
+
+Using the *cafe* data frame, determine the correlation between *age* and service (*svc*) to see if there is a relationship between a customer's age and their rating for the service. Because service is an ordered variable, use Spearman's *rho* as the correlation method. Record the correlation and p-value in the deliverable document for this lab.
+
+```{r ex="act7.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act7.2", type="sample-code"}
+# Using the cafe data frame, determine the correlation between age and service (svc).
+
+```
+
+### Activity 3: Kendall's Tau
+
+Using the *cafe* data frame, determine the correlation between the distance driven (*miles*) and the *meal* eaten. Because meal is categorical but not ordered, use Kendall's *tau* as the correlation method. Record the correlation and p-value in the deliverable document for this lab.
+
+```{r ex="act7.3", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act7.3", type="sample-code"}
+# Using the cafe data frame, determine the correlation between miles and meal. 
+
+```
+
+### Activity 4: Prediction Using Regression
+
+Using the *cafe* data frame, determine the slope and y-intercept for the size of *bill* (y-axis) as a function of the *length* (x-axis) of the meal. Use those numbers to predict the bill for a meal lasting 42 minutes. Round the bill to the nearest penny. Record the prediction in the deliverable document for this lab.
+
+```{r ex="act7.4", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act7.4", type="sample-code"}
+# Using the cafe data frame, predict the bill for a meal lasting 42 minutes.
+
+```
+
+### Activity 5: Prediction Using Regression
+
+Using the *cafe* data frame, determine the slope and y-intercept for the size of the *tip* (y-axis) as a function of the *age* (x-axis) of the customer. Use those numbers to predict the tip from a customer who is 48 years old. Round the tip to the nearest penny. Record the prediction in the deliverable document for this lab.
+
+```{r ex="act7.5", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act7.5", type="sample-code"}
+# Using the cafe dataset, predict the tip from a 48 year-old customer.
+
+```
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 7," like "George Self Lab 7" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

@@ -1,0 +1,457 @@
+# Visualizing Frequency {#lab6}
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  strip.white = TRUE,
+  comment = "#>",
+  out.width = "65%", 
+  message=FALSE,
+  warnings=FALSE
+)
+
+```
+
+```{r, include=FALSE}
+library(tutorial)
+tutorial::go_interactive()
+
+library(knitr)
+library(kableExtra) # For building pretty tables
+options(knitr.table.format = "html")
+
+```
+
+
+Categorical data items are often reported using frequency tables where the number of times a particular survey item was selected is displayed. However, there are many ways to visualize frequency data and people using these charts and graphs often find it easier to understand the underlying data than with a table. 
+
+## Visualizing Frequency
+
+### Bar Chart
+
+A bar chart is used to display the frequency count for categorical data. The following figure is a bar chart showing the number of automobiles with three, four, and five gears according to the mtcars data frame.
+
+```{r fig0601,fig.width=3.5,fig.height=4,out.width="40%", fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+barplot(table(mtcars$gear), 
+        main = "Count by Gears",
+        xlab = "Number of Gears",
+        ylab = "Number of Cars",
+        col = rainbow(6)
+        )
+```
+
+These types of visuals are more effective than a table full of numbers and they are easy to generate with R. The following script creates a simple bar chart.
+
+* Line 4: This creates a bar chart using the `barplot` function. The first argument sent to the function is the data source for the chart. In this case, R creates a table from the *gears* variable in *mtcars* and then uses that table as data input for the bar chart. All of the other lines in this script embellish the bar chart to make it more usable.
+* Line 5: The “main” attribute sets the main title for the bar chart. In general, for any graphic in R “main” is used to set the title of the graph.
+* Line 6: This creates the label for the x-axis. 
+* Line 7: This creates the label for the y-axis.
+* Line 8: This sets the color palette for the graph. In this case, the “rainbow” palette is used for the graph. Three colors were requested from that palette but specifying any number larger than three would have worked and created a slightly different palette. Experimentation is needed to find the most suitable palette for any given graph. (Note: setting colors on graphs was introduced in [Lab 4](#lab4color))
+* Line 9: This just closes the `barplot` function.
+
+```{r}
+# Simple Bar Chart
+attach(mtcars)
+
+barplot(table(gear),
+  main = "Number of Cars By Gears",
+  xlab = "Gears",
+  ylab = "Count",
+  col = rainbow(3)
+)
+
+detach(mtcars)
+```
+
+<div class="grsnote">
+The DataCamp interface generates graphics in a *Plots* tab but because of the size of the interface those plots are "squished" and impossible to read. Click the double-headed arrow button on the *Plots* tab to open the graph in a larger window for evaluation and copying to a document. If the graphic does not open in a larger window then temporarily pause the browser's pop-up blocker.
+</div>
+
+### Clustered Bar Chart
+
+A clustered bar chart (sometimes called a "Grouped Bar Chart") displays two or more variables and is used to display categorical data. In general, clustered bar charts are best at showing relationships between variables but not so good for determining the absolute size of each variable. The following chart shows the number of passengers on board the Titanic when it sank. While it is easy to determine that there were a lot more males than females on board, it is not possible to read the exact bar height of, for example, third class males.
+
+
+```{r fig0602,fig.width=5.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+barplot(margin.table(Titanic,c(1,2)),
+        beside = TRUE,
+        main = "Titanic Passengers by Class and Sex",
+        xlab = "Sex",
+        ylab = "Count of Passengers",
+        col = cm.colors(4)
+        )
+legend(x = "topright",
+       y = c("First","Second","Third","Crew"),
+       title = "Class",
+       title.col = "navy",
+       fill = cm.colors(4)
+      )
+```
+
+The following script creates a clustered bar chart.
+
+* Line 4: This begins the `barplot` function. It creates a table that contains the counts for *cyl* and *gear* in the *mtcars* data frame and then uses that table to produce the bar chart.
+* Lines 5-8: These lines are essentially the same as for a single bar chart as described in the previous script.
+* Line 9: Setting legend to TRUE displays a legend in the corner of the plot. Whenever more than one variable is being plotted it is important to display a legend for the reader. In this case, the legend displays the colors used for the *cyl* variable.
+* Line 10: A stacked bar is the default type of chart but Line 10 instructs R to create a chart with the two variables beside each other.
+
+```{r}
+# Clustered Bar Chart
+attach(mtcars)
+
+barplot(table(cyl, gear),
+  main = "Clustered Bar Chart",
+  xlab = "Gear",
+  ylab = "Count",
+  col = rainbow(3),
+  legend = TRUE,
+  beside = TRUE
+)
+
+detach(mtcars)
+```
+
+### Clustered Bar Chart with Gradient Colors
+
+For reasons described in the [Heat Map](#lab6heatmaps) section below, it is often important to display graphs that use only shades of one color. The following script produces the bar chart seen in the previous figure but using only shades of blue.
+
+* Line 4: This line creates a new function named `colpal` (for “color palette”). That function calculates the codes for sevarl color gradients between blue and white. To create color gradients between green and white or red and black then those color names would be inserted in this line. In order to make the chart more usable for readers who are color blind, the gradients should contain only one color and either white or black.
+* Line 6-9: These are the same as found in the previous bar chart script.
+* Line 10: This line sets the color for this plot by calling the `colpal` function created in Line 4 and passing it a requirement for three colors.
+* Lines 11-13: These are the same as found in the previous bar chart script.
+
+```{r}
+# Clustered Bar Chart With Gradient Colors
+attach(mtcars)
+
+colpal <- colorRampPalette(c("blue", "white"))
+
+barplot(table(cyl, gear),
+  main = "Clustered Bar Chart",
+  xlab = "Gear",
+  ylab = "Count",
+  col = colpal(3),
+  legend = TRUE,
+  beside = TRUE
+)
+
+detach(mtcars)
+```
+
+### Stacked Bar Chart
+
+A stacked bar chart has one variable stacked on top of another. In general, these are very difficult to read and should be avoided. Consider, for example, the following figure. This chart shows admissions for the University of California at Berkeley for six different programs. The top part of each bar (in blue) are the number admitted while the bottom part of each bar (in red) are the number rejected. Look at programs C and D. Were more students accepted in C or in D? Because these two values do not have the same baseline it is impossible to tell for certain which is larger.
+
+```{r fig0603,fig.width=3,fig.height=3,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+barplot(margin.table(UCBAdmissions,c(1,3)),
+        main = "Berkeley Admissions",
+        xlab = "Program ID",
+        ylab = "Count of Admissions",
+        col = terrain.colors(3)
+        )
+
+```
+
+The following script produces a stacked bar chart that uses only gradients of the color brown.
+
+* Line 3: This creates up a function called `colpal` that makes gradients between brown and white for the bar chart.
+* Lines 5-11 This is the `barplot` function used in the earlier scripts, except “beside = TRUE” is missing. By default, bar plots are stacked in R so if the “beside” argument is missing (or set to “FALSE”) then the result will be a stacked bar plot.
+
+```{r}
+# Stacked Bar Chart With Gradient Colors
+attach(mtcars)
+
+colpal <- colorRampPalette(c("Brown", "white"))
+
+barplot(table(cyl,gear),
+  main = "Automobile Cylinders vs. Gears",
+  xlab = "Gears",
+  ylab = "Count",
+  col = colpal(3),
+  legend = TRUE
+  )
+
+detach(mtcars)
+```
+
+It should be evident that the bar chart created in the above script is not very useful. While it is fairly easy to see that the number of 8-cylinder cars with three gears is much larger than the other categories, it is difficult to determine, for example, how many cars have five gears and eight cylinders. This difficulty is even worse when there are more than three levels for either of the two variables being plotted.
+
+### Pie Chart
+
+A pie chart is commonly used to display categorical data; however, pie charts are notoriously difficult to understand, especially if the writer uses some sort of 3-D effect or “exploded” slices. The human brain seems able to easily compare the heights of two or more bars, as in bar charts, but the areas of two or more slices of a pie chart are difficult to compare. For this reason, pie charts should be avoided in research reports. If they are used at all, they should only illustrate one slice’s relationship to the whole, not comparing one slice to another; and no more than four or five slices should ever be presented on one chart.
+
+The following figure shows the results of an experiment to compare the effectiveness of various feed supplements on the growth rate of chickens. This figure illustrates the problem with pie charts. Notice that casein seems to promote growth better than horsebean, but it is impossible to determine if casein is better than sunflower from this chart.
+
+```{r fig0604,fig.width=4,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+count <- aggregate(chickwts$weight, by=list(chickwts$feed), FUN=mean)
+labels <- c(levels(chickwts$feed))
+pie(count$x,
+    labels = labels,
+    main = "Chick Weights by Type of Feed",
+    col = terrain.colors(6)
+    )
+```
+
+The following script creates two pie charts.
+
+* Line 4: This starts a pie chart function. In this line, the *feed* variable in the *chickwts* data frame is extracted to a table since the pie chart function expects input in the form of a table.
+* Lines 5-6: These lines define the main title and colors used for the pie chart. These parameters are the same as was seen in other graphs in this lab.
+* Line 7: This line specifies that the six levels of the feed variable will be used as the labels for the pie chart.
+* Lines 11-14: This is the aggregate function first encountered in [Lab 5](#lab5calculatedcrosstabs). These lines create a new variable named *wts* that contains a table created by finding the mean weights for each type of feed. This variable contains the means that will be used to create the pie chart.
+* Lines 16-20: This is the pie chart function that uses *wts* as input. By default, the aggregate function in Lines 11-14 creates a variable with two columns: *Group.1* and *x*. These variable names have no significance, they are just what R uses to generate the table. *Group.1* contains group names for each type of feed (that is, “casein,” “horsebean,” etc.) and *x* contains the mean weight for each of those types of feed.
+
+
+```{r}
+attach(chickwts)
+
+# Count of Chicks by Feed
+pie(table(feed),
+  main = "Count of Chicks by Feed",
+  col = rainbow(6),
+  labels = c(levels(feed))
+  )
+
+# Mean Weight Gain of Chicks by Feed
+wts <- aggregate(weight,
+  by=list(feed),
+  FUN=mean
+  )
+
+pie(wts$x,
+  main = "Mean Chick Weight Gain By Feed",
+  col = rainbow(6),
+  labels = c(levels(feed))
+  )
+
+detach(chickwts)
+```
+
+Note: The above script includes two pie charts. The first pie chart only shows the number of chicks that were fed a given feed. Even though the pie “slices” are very nearly the same size there was a slightly different number of chicks on each type of feed. That information, though, would be of limited value since the goal of this research project was to determine which feed offered the best weight gain. The second pie chart attempts to answer that question. It is important for a researcher to keep the question being asked in mind so the answer provided addresses that question.
+
+### Heat Maps {#lab6heatmaps}
+
+Heat maps use colors to depict the counts of variables and are commonly found around election time to depict how precincts are voting, red for republican and blue for democrat. They are also routinely used on weather maps to depict areas with the greatest probability for rain or snow. Heat maps can be displayed in a geographical map where, for example, the various states are shaded to represent some factor, but they are also commonly seen as a grid. Designers must be careful to avoid using multiple hues on a heatmap and, instead, use only shades of the same color or gradients from one color to another. Using multiple hues creates what is sometimes called “clown’s pants” due to the extreme patchy color scheme. Charts with that type of coloration can be distracting and unusable. the following figure shows a heat map of various socioeconomic indicators by province in Switzerland from 1888.
+
+```{r fig0605,fig.width=4,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+colpal <- colorRampPalette(c("blue", "white")) # generate a color pallette
+x <- as.matrix(swiss[1:15,])
+heatmap(x,
+        Rowv=NA,
+        Colv=NA,
+        scale="column",
+        margins=c(10,7),
+        #col = colpal(10),
+        main = "Swiss Stats",
+        ylab = "Province",
+        xlab = "Indicator" 
+        )
+```
+
+In a heat map produced by R, lighter colors represent larger numbers. Thus, the province with the highest fertility rate is Franches-Mnt since it has the lightest color and the province with the least agriculture is Courtelary since it has the darkest color for those variables. Interpreting the heat map can be a challenge for the researcher. In some cases a light color would be positive and in others negative. For example, the highest education level would be in Neuveville (positive) but the highest infant mortality would be in Porrentruy (negative). Also, the colors are often very similar and difficult to distinguish. For example, for “examination” Cossonay has a numeric value of 22 while Aigle has 21. These two colors are slightly different but it would be difficult to detect that from the image. Often, the best that can be done with a heat map is identifying broad generalizations.
+
+The following script creates a heat map for Party Size by Meal in the *cafe* data frame.
+
+* Line 4: This line creates a contingency table from columns 4 and 8 of the *cafe* data frame and store that table in a variable named *htbl*. 
+* Line 5: R can store data in several different formats and many, like vector and data frame, are used by other labs in this manual. Heat maps require data to be in a matrix format and this line converts the *htbl* contingency table into a matrix named *hmap*.
+* Line 6: This is the start of the heat map function. This line instructs R to create a heat map from the *hmap* matrix.
+* Line 7: The main title of the heatmap is “Cafe Ptysize by Meal.”
+* Line 8: The x-axis is labeled “Meal.”
+* Line 9: The y-axis is labeled “Ptysize.”
+* Line 10: This suppresses the row “dendogram” that is used to order the rows. The best way to see what this line does is to comment it out and re-run the script.
+* Line 11: This suppresses the column “dendogram.”
+* Line 12: Sets the heat map to scale the columns. In this way, the color for each column cell is calculated such that the entire column’s mean is zero and the standard deviation is one. The other option is to scale “row” and researchers would want to try both to see which provides a better heat map.
+* Line 13: This sets the right and bottom margins. The values were found by simple trial-and-error to produce the most legible heat map.
+
+```{r ex="heatmap", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+
+```{r heatmap, type="sample-code"}
+# Cafe Party Size by Meal
+attach(cafe)
+
+htbl <- table(cafe[,c(8,4)])
+hmap <- as.matrix(htbl)
+heatmap(hmap,
+  main = "Cafe Ptysize by Meal",
+  xlab = "Meal",
+  ylab = "Ptysize",
+  Rowv=NA,
+  Colv=NA,
+  scale="column",
+  margins=c(8,3)
+)
+
+detach(cafe)
+```
+
+
+### Mosiac Plot
+
+A mosiac plot indicates the relative counts of items in a data frame by sizing areas on a grid. The following figure is a mosiac plot that indicates the relationship between the number of gears and cylinders in several cars. Notice that 8-cylinder cars overwhelmingly have three gears while 4-cylinder cars tend to have four gears. This plot gives a quick visual representation of the relationships between categorical variables, like a pie chart shows the relationship between continuous variables. A mosiac plot would suffer the same weaknesses as a pie chart and are, generally, rather difficult to interpret.
+
+```{r fig0606,fig.width=3.5,fig.height=4,fig.align="center", echo=FALSE, message=FALSE, warnings=FALSE, tut=FALSE}
+colpal <- colorRampPalette(c("purple", "white")) # generate a color pallette
+plot(table(mtcars$cyl,mtcars$gear),
+     main = "US Car Information",
+     xlab = "Cylinders",
+     ylab = "Gears",
+     col=colpal(4))
+```
+
+The following script creates a mosiac plot.
+
+* Lines 4-9 The `plot` function is used to create mosaic plots. This same function is also used to create scatter plots, but that type of plot is discussed in [Lab 8](#lab8). Notice that a mosiac plot requires the input to be in table format so Line 4 creates a table from the *gear* and *cyl* variables. The other lines in this small script are similar to those used for other graphics functions and should be fairly easy to understand.
+
+
+```{r}
+# Mosiac Plots Using MTCars
+attach(mtcars)
+
+plot(table(gear, cyl),
+  main = "Gears vs Cylinders",
+  xlab = "Gears",
+  ylab = "Cylinders",
+  col = topo.colors(3)
+  )
+
+detach(mtcars)
+```
+
+## Activities
+
+<div class="grswarn">
+Important Note: The DataCamp interface generates graphics in a *Plots* tab but because of the size of the interface those plots are "squished" and impossible to read. To generate a larger version of the graph for submission, click the double-headed arrow button along the bottom of the *Plots* tab to open the graph in a larger window and then copy/paste that larger image to the deliverable document for grading. If the graphic does not open in a larger window then temporarily pause the browser's pop-up blocker.
+</div>
+
+### Activity 1: Bar Chart
+
+Using the *cafe* data frame, create a bar chart for *meal*.  The chart should:
+
+1. Have a title of “Activity 1: Bar Chart”
+2. The x-axis should have this label: “Meal”
+3. The y-axis should have this label: “Count”
+4. Use any color palette desired
+
+Copy/paste the bar chart in the deliverable document for this lab.
+
+```{r ex="act6.1", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act6.1", type="sample-code"}
+# Using the cafe data frame, create a bar chart for meal.
+
+```
+
+### Activity 2: Clustered Bar Chart
+
+Using the *cafe* data frame, create a clustered bar chart that shows the number of people who ate a given *meal* by *sex*. The chart should have three clusters (male, female, other) and each of those three clusters should have four meals (breakfast, lunch, dinner, other). The chart should: 
+
+1. Have a title of “Activity 2: Clustered Bar Chart”
+2. The x-axis should have this label: “Sex 
+3. The y-axis should have this label: “Count”
+4. Use any color palette desired
+5. There should be a legend that lists “breakfast, dinner, lunch,
+other”
+6. The bars should be beside each other rather than stacked.
+
+Copy/paste the bar chart in the deliverable document for this lab.
+
+```{r ex="act6.2", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act6.2", type="sample-code"}
+# Using the cafe data frame, create a clustered bar chart that shows the number of people who ate a given meal by sex.
+
+```
+
+### Activity 3: Stacked Bar Chart
+
+Using the *cafe* data frame, create a stacked bar chart that shows the number of people who ate a given *meal* by *sex*. The chart should have three columns (male, female, other) and each of those three columns should have four meals (breakfast, lunch, dinner, other). The chart should:
+
+1. Have a title of “Activity 3: Stacked Bar Chart”
+2. The x-axis should have this label: “Sex”
+3. The y-axis should have this label: “Count”
+4. Use any color palette desired
+5. There should be a legend that lists “breakfast, dinner, lunch, other”
+6. The bars should be stacked rather than beside each other.
+
+Copy/paste the bar chart in the deliverable document for this lab.
+
+```{r ex="act6.3", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act6.3", type="sample-code"}
+# Using the cafe data frame, create a stacked bar chart that shows the number of people who ate a given meal by sex.
+
+```
+
+### Activity 4: Pie Chart
+
+Using the *cafe* data frame, create a pie chart that shows the number of people who ate a given *meal* (breakfast, lunch, dinner, other). 
+
+1. Have a title of “Activity 4: Pie Chart”
+2. Use any color palette desired
+3. Include labels for each of the pie slices
+
+Copy/paste the pie chart in the deliverable document for this lab.
+
+```{r ex="act6.4", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act6.4", type="sample-code"}
+# Using the cafe data frame, create a pie chart that shows the number of people who ate a given meal.
+
+```
+
+### Activity 5: Heat Map
+
+Using the *cafe* dataset, create a heat map that compares the number of people dining at each *meal* (breakfast, lunch, dinner, other) for each *day* (Monday, Tuesday, etc.). The goal is to find the most/least popular meal for each day of the week. (Tip: *meal* is column 4 and *day* is column 3 in the data frame.) The chart should:
+
+1. Have a title of “Activity 5: Heat Map”
+2. Have an xlab of “Meal”
+3. Have a ylab of “Day”
+4. Not include the Rowv/Colv symbols
+5. Scale by column
+6. Have margins=c(8,7)
+
+Copy/paste the heat map in the deliverable document for this lab.
+
+```{r ex="act6.5", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act6.5", type="sample-code"}
+# Using the cafe dataset, create a heat map that compares the number of people dining at each meal for each day.
+
+```
+
+### Activity 6: Mosaic Plot
+
+Using the *cafe* dataset, create a mosaic plot that compares the number of people dining at each *meal* (breakfast, lunch, dinner, other) to the rating for service (*svc*). The plot should:
+
+1. Have a title of “Activity 6: Mosaic”
+2. Have an xlab of “Meal”
+3. Have a ylab of “Service”
+4. Use any color palette desired
+
+Copy/paste the mosaic plot in the deliverable document for this lab.
+
+```{r ex="act6.6", type="pre-exercise-code"}
+cafe <- read.csv('http://georgeself.com/maincafe.csv')
+```
+
+```{r ex="act6.6", type="sample-code"}
+# Using the cafe dataset, create a mosaic plot that compares the number of people dining at each meal to the rating for service.
+
+```
+
+## Deliverable
+
+Complete the activities above and consolidate the responses into a single document. Name the document with your name and "Lab 6," like "George Self Lab 6" and submit that document for grade. It is also acceptable to consolidate the responses into a Google Document and submit a link to that document.
+

@@ -1,0 +1,44 @@
+--- 
+title: "BASV 316 R Lab Manual"
+author: "George Self"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+description: "This is the lab manual for the University of Arizona South BASV 316 class."
+github-repo: "grself/BASV316_Lab_Manual"
+---
+
+<!--
+
+TODO:
+
+180211: None at this time
+
+-->
+
+# Preface {-}
+
+I have taught BASV 316, _Introductory Methods of Analysis_, online for the University of Arizona in Sierra Vista since 2010 and enjoy working with students on research methods. From the start, I wanted students to work with statistics as part of our studies and carry out the types of calculations that are discussed in the text. As I evaluated statistical software I had three criteria:
+
+* **Open Educational Resource (OER)**. It is important to me that students use software that is available free of charge and is supported by the entire web community.
+
+* **Platform**. While most of my students use a Windows-based system, some use Macintosh and it was important to me to use software that is available for all of those platforms. As a bonus, most OER software is also available for the Linux system, though I am not aware of any of my students who are using Linux. Finally, I occasionally have students who are not able to load software on their personal computers (think: *Chromebook*) so I needed an online capability.
+
+* **Longevity**. I wanted a system that could be used in other college classes or in a business setting after graduation. That way, any time a student spends learning the software in my class will be an investment that can yield results for many years.
+
+*R* (just a single letter, *R*) met those objectives and that is the software I chose to use. This manual started as a series of six lab exercises using *R* but has grown over the years to the ten topics covered in this edition. Moreover, *R* is a recognized standard for statistical analysis and could be easily used for even peer-reviewed published papers. It is my hope that students will find the labs instructive and they will then be able to use *R* for other classes. 
+
+This lab manual is written with *Bookdown* tools in *RStudio*. It is published under a *Creative Commons 0 Universal* license, essentially "public domain," (see [Creative Commons License]) with a goal that other instructors can modify and use it to meet their own needs. The source can be found at [GITHUB](https://goo.gl/6dZqCK) and I always welcome comments. Finally, it was written with base R (R Core Team (2017). R: A language and environment for statistical computing. [R Foundation for Statistical Computing, Vienna, Austria.](https://www.R-project.org/)).
+
+--George Self
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
